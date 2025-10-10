@@ -1,16 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="bffa4da1-7218-4b53-b9b8-f54585d54d5c" name="Changes" comment="" />
+    <list default="true" id="bffa4da1-7218-4b53-b9b8-f54585d54d5c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.UAssetAPI-DNNE/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.UAssetAPI-DNNE/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UAssetAPI-DNNE/Class1.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UAssetAPI-DNNE/UAssetAPI-DNNE.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/UAssetAPI-DNNE/UAssetAPI-DNNE.csproj" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 7
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/UAssetAPI-DNNE/Exports.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
+  <component name="KubernetesApiProvider"><![CDATA[{
+  "isMigrated": true
 }]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="33sCfwlsQs1QE12B5LmGydgnA6Q" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -19,6 +39,12 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
@@ -31,6 +57,7 @@
       <option name="presentableId" value="Default" />
       <updated>1760096499268</updated>
       <workItem from="1760096500397" duration="1000" />
+      <workItem from="1760096662893" duration="503000" />
     </task>
     <servers />
   </component>

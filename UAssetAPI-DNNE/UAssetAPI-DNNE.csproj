@@ -5,10 +5,18 @@
         <RootNamespace>UAssetAPI_DNNE</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+
+        <EnableDynamicLoading>true</EnableDynamicLoading>
+        <DnneNativeBinaryName>uassetapi</DnneNativeBinaryName>
+        <DnneAddGeneratedBinaryToProject>true</DnneAddGeneratedBinaryToProject>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\submodules\UAssetAPI\UAssetAPI\UAssetAPI.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="DNNE" Version="2.0.7" />
     </ItemGroup>
 
 </Project>
