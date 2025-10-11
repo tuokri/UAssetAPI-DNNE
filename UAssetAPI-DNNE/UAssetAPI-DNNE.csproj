@@ -5,18 +5,57 @@
         <RootNamespace>UAssetAPI_DNNE</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Authors>Tuomo Kriikkula</Authors>
 
+        <DnneBuildExports>true</DnneBuildExports>
         <EnableDynamicLoading>true</EnableDynamicLoading>
-        <DnneNativeBinaryName>uassetapi</DnneNativeBinaryName>
+        <DnneNativeBinaryName>uassetapi_dnne</DnneNativeBinaryName>
         <DnneAddGeneratedBinaryToProject>true</DnneAddGeneratedBinaryToProject>
+        <DnneMSBuildLogging>high</DnneMSBuildLogging>
+        <DnneAdditionalIncludeDirectories>
+            "$(MSBuildProjectDirectory)/src/c/"
+        </DnneAdditionalIncludeDirectories>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\submodules\UAssetAPI\UAssetAPI\UAssetAPI.csproj" />
+        <ProjectReference Include="..\submodules\UAssetAPI\UAssetAPI\UAssetAPI.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="DNNE" Version="2.0.7" />
+        <PackageReference Include="DNNE" Version="2.0.7"/>
     </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="src\c\"/>
+    </ItemGroup>
+
+    <Target Name="GenerateEngineVersionHeader"
+            AfterTargets="CoreCompile"
+            BeforeTargets="DnneBuildNativeExports"
+            Inputs="$(ProjectDir)src/templates/EngineVersion.liquid"
+            Outputs="$(OutDir)engineversion.h">
+
+        <Message Text="Generating '$(OutDir)engineversion.h'" Importance="high"/>
+        <MakeDir Directories="$(OutDir)"/>
+
+        <!-- TODO: there has to be a cleaner and more robust way of doing this! -->
+        <!-- TODO: what happens in Linux builds with the .exe suffix? -->
+        <!-- TODO: how to make sure UAssetAPI-DNNE.CodeGen is actually built before we try to run this? -->
+        <!-- TODO: this breaks if UAssetAPI-DNNE.CodeGen and UAssetAPI-DNNE target frameworks differ! -->
+        <!-- TODO: cleaning UAssetAPI-DNNE.CodeGen fails if the generator is still running during a rebuild! -->
+        <Exec Command="$(SolutionDir)UAssetAPI-DNNE.CodeGen/bin/$(Configuration)/$(TargetFramework)/UAssetAPI-DNNE.CodeGen.exe --input=&quot;$(ProjectDir)src/templates/EngineVersion.liquid&quot; --output=&quot;$(OutDir)engineversion.h&quot; --render-action=EngineVersion"/>
+    </Target>
+
+    <Target Name="CleanEngineVersionHeader" BeforeTargets="CoreClean">
+        <Delete Files="$(OutDir)engineversion.h"/>
+    </Target>
 
 </Project>

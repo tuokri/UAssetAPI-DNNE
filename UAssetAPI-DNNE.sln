@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAssetAPI-DNNE", "UAssetAPI
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAssetAPI", "submodules\UAssetAPI\UAssetAPI\UAssetAPI.csproj", "{178417EC-1177-413E-BE85-C83AECD64279}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UAssetAPI-DNNE.CodeGen", "UAssetAPI-DNNE.CodeGen\UAssetAPI-DNNE.CodeGen.csproj", "{CAFD4B88-5735-4030-BEEA-2C832FF74AAE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{178417EC-1177-413E-BE85-C83AECD64279}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{178417EC-1177-413E-BE85-C83AECD64279}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{178417EC-1177-413E-BE85-C83AECD64279}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAFD4B88-5735-4030-BEEA-2C832FF74AAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAFD4B88-5735-4030-BEEA-2C832FF74AAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAFD4B88-5735-4030-BEEA-2C832FF74AAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAFD4B88-5735-4030-BEEA-2C832FF74AAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
