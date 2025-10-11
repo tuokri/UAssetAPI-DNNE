@@ -1,0 +1,12 @@
+﻿<Project>
+    <!-- NOTE: We can't run the win-64 CodeGen on Linux and vice versa.
+               So just force the correct RDI for the build OS for now.
+               TODO: make this configurable in the future?
+    -->
+    <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' And '$(ForcedRuntimeIdentifier)' != '' ">
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' And '$(ForcedRuntimeIdentifier)' != '' ">
+        <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    </PropertyGroup>
+</Project>

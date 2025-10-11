@@ -58,3 +58,5 @@ nunit-*.xml
 !./.idea/
 
 *DotSettings.user
+
+.vs/

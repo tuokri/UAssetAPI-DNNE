@@ -19,6 +19,9 @@
         <Description>UAssetAPI foreign function interface using DNNE.</Description>
         <PackageProjectUrl>https://github.com/tuokri/UAssetAPI-DNNE</PackageProjectUrl>
         <Copyright>Copyright © Tuomo Kriikkula 2025</Copyright>
+        <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <FileVersion>1.0.0.0</FileVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -55,11 +58,38 @@
         <Message Text="Generating '$(OutDir)engineversion.h'" Importance="high"/>
         <MakeDir Directories="$(OutDir)"/>
 
-        <!-- TODO: there has to be a cleaner and more robust way of doing this! -->
-        <!-- TODO: what happens in Linux builds with the .exe suffix? -->
-        <!-- TODO: this breaks if UAssetAPI-DNNE.CodeGen and UAssetAPI-DNNE target frameworks differ! -->
-        <!-- TODO: cleaning UAssetAPI-DNNE.CodeGen can fail if the generator is still running during a rebuild! -->
-        <Exec Command="$(SolutionDir)UAssetAPI-DNNE.CodeGen/bin/$(Configuration)/$(TargetFramework)/UAssetAPI-DNNE.CodeGen.exe --input=&quot;$(ProjectDir)src/templates/EngineVersion.liquid&quot; --output=&quot;$(OutDir)engineversion.h&quot; --render-action=EngineVersion"/>
+        <!-- Build machine OS is Windows. -->
+        <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' And '$(ForcedRuntimeIdentifier)' == '' ">
+            <!--suppress CheckTagEmptyBody -->
+            <RDIPart></RDIPart>
+        </PropertyGroup>
+        <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' And '$(ForcedRuntimeIdentifier)' != '' ">
+            <RDIPart>win-x64/</RDIPart>
+        </PropertyGroup>
+
+        <!-- Build machine OS is Linux. -->
+        <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' And '$(ForcedRuntimeIdentifier)' == '' ">
+            <!--suppress CheckTagEmptyBody -->
+            <RDIPart></RDIPart>
+        </PropertyGroup>
+        <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' And '$(ForcedRuntimeIdentifier)' != '' ">
+            <RDIPart>linux-x64/</RDIPart>
+        </PropertyGroup>
+
+        <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+            <CodeGenBin>UAssetAPI-DNNE.CodeGen.exe</CodeGenBin>
+        </PropertyGroup>
+        <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+            <CodeGenBin>UAssetAPI-DNNE.CodeGen</CodeGenBin>
+        </PropertyGroup>
+
+        <!-- TODO: there has to be a cleaner and more robust way of doing this? -->
+        <!-- TODO: this breaks if UAssetAPI-DNNE.CodeGen and UAssetAPI-DNNE target frameworks differ? -->
+        <PropertyGroup>
+            <CodeGenCmd>$(SolutionDir)UAssetAPI-DNNE.CodeGen/bin/$(Configuration)/$(TargetFramework)/$(RDIPart)$(CodeGenBin)</CodeGenCmd>
+        </PropertyGroup>
+
+        <Exec Command="$(CodeGenCmd) --input=&quot;$(ProjectDir)src/templates/EngineVersion.liquid&quot; --output=&quot;$(OutDir)engineversion.h&quot; --render-action=EngineVersion"/>
     </Target>
 
     <Target Name="CleanEngineVersionHeader" BeforeTargets="CoreClean">

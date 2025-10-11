@@ -1,0 +1,18 @@
+<Project>
+    <PropertyGroup>
+        <RuntimeIdentifier>$(ForcedRuntimeIdentifier)</RuntimeIdentifier>
+    </PropertyGroup>
+
+    <!-- NOTE: If the host OS is Windows, we can't build
+               the generated Linux C code, and vice versa!
+    -->
+    <!-- TODO: THIS SHIT DOES NOT WORK, PASS THE VALUE MANUALLY TO
+               DOTNET BUILD AS NEEDED WITH: "-p DnneBuildExports=false"!
+    -->
+    <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' And '$(ForcedRuntimeIdentifier)' == 'linux-x64' ">
+        <DnneBuildExports>false</DnneBuildExports>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' And '$(ForcedRuntimeIdentifier)' == 'win-x64' ">
+        <DnneBuildExports>false</DnneBuildExports>
+    </PropertyGroup>
+</Project>

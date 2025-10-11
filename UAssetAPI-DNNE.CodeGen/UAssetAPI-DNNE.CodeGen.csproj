@@ -11,6 +11,9 @@
         <Description>Code generation tool for the UAssetAPI-DNNE project.</Description>
         <Copyright>Copyright © Tuomo Kriikkula 2025</Copyright>
         <PackageProjectUrl>https://github.com/tuokri/UAssetAPI-DNNE</PackageProjectUrl>
+        <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <FileVersion>1.0.0.0</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
