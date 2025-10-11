@@ -39,12 +39,12 @@ jobs:
       - run: dotnet restore --locked-mode
 
       - run: echo "DNNE_BUILD_EXPORTS=false" >> $GITHUB_ENV
-        if: ${{ (matrix.os == 'windows-latest') && (matrix.forced_runtime_identifier) != 'win-x64' }}
+        if: ${{ (matrix.os == 'windows-latest') && (matrix.forced_runtime_identifier != 'win-x64') }}
 
       - run: echo "DNNE_BUILD_EXPORTS=false" >> $GITHUB_ENV
-        if: ${{ (matrix.os == 'ubuntu-latest') && (matrix.forced_runtime_identifier) != 'linux-x64' }}
+        if: ${{ (matrix.os == 'ubuntu-latest') && (matrix.forced_runtime_identifier != 'linux-x64') }}
 
       - name: Run dotnet build
         run: dotnet build --configuration ${{ matrix.configuration }}
-          -p:ForcedRuntimeIdentifier=linux-x64=${{ matrix.forced_runtime_identifier }}
+          -p:ForcedRuntimeIdentifier=${{ matrix.forced_runtime_identifier }}
           -p:DnneBuildExports=${{ env.DNNE_BUILD_EXPORTS }}
