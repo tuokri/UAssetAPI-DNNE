@@ -42,12 +42,12 @@ jobs:
         if: ${{ (matrix.os == 'ubuntu-latest') && (matrix.forced_runtime_identifier != 'linux-x64') }}
 
       - run: echo "DNNE_BUILD_EXPORTS=true" >> $GITHUB_ENV
-        if: ${{ env.DNNE_BUILD_EXPORTS == '' || env.DNNE_BUILD_EXPORTS == null }}
+        if: env.DNNE_BUILD_EXPORTS == '' || env.DNNE_BUILD_EXPORTS == null
 
       - name: Run dotnet build
         run: dotnet build --configuration ${{ matrix.configuration }}
           -p:ForcedRuntimeIdentifier=${{ matrix.forced_runtime_identifier }}
-          -p:DnneBuildExports=${{ env.DNNE_BUILD_EXPORTS }}
+          -p:DnneBuildExports=$DNNE_BUILD_EXPORTS
 
       - name: Archive build artifacts
         uses: actions/upload-artifact@v4
