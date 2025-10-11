@@ -48,3 +48,13 @@ jobs:
         run: dotnet build --configuration ${{ matrix.configuration }}
           -p:ForcedRuntimeIdentifier=${{ matrix.forced_runtime_identifier }}
           -p:DnneBuildExports=${{ env.DNNE_BUILD_EXPORTS }}
+
+      - name: Archive UMB build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: UAssetAPI-DNNE-${{ matrix.os }}-${{ matrix.configuration }}-${{ forced_runtime_identifier }}
+          path: |
+            UAssetAPI-DNNE/bin
+            UAssetAPI-DNNE/obj
+            UAssetAPI-DNNE.CodeGen/bin
+            UAssetAPI-DNNE.CodeGen/obj
