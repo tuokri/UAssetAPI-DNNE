@@ -26,7 +26,12 @@ public class Exports
         return a + 1;
     }
 
-    [DNNE.C99DeclCode("#include \"uassetapi_dnne/result/result.h\"")]
+    [DNNE.C99DeclCode(
+        """
+        #include "uassetapi_dnne/result.h"
+        #include "uassetapi_dnne/engineversion.h"
+        """
+    )]
     [UnmanagedCallersOnly(EntryPoint = "UAssetAPI_ToJson")]
     [return: DNNE.C99Type("struct CsResult*")]
     public static unsafe CsResult* ToJson(int engineVersion)

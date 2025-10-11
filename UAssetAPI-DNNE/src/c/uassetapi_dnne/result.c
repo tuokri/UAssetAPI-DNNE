@@ -28,7 +28,7 @@ SOFTWARE.
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "uassetapi_dnne/result/result.h"
+#include "uassetapi_dnne/result.h"
 
 CsResult* CsSuccess(void* value)
 {

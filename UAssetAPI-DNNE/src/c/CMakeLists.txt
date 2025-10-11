@@ -8,7 +8,7 @@ set(CMAKE_C_STANDARD 23)
 add_library(
     UAssetAPI-DNNE-result
     STATIC
-    uassetapi_dnne/result/result.c
+    uassetapi_dnne/result.c
 )
 
 target_include_directories(

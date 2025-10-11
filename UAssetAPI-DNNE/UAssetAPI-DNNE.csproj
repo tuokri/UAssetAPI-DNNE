@@ -1,20 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <RootNamespace>UAssetAPI_DNNE</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Authors>Tuomo Kriikkula</Authors>
-
-        <DnneBuildExports>true</DnneBuildExports>
-        <EnableDynamicLoading>true</EnableDynamicLoading>
-        <DnneNativeBinaryName>uassetapi_dnne</DnneNativeBinaryName>
-        <DnneAddGeneratedBinaryToProject>true</DnneAddGeneratedBinaryToProject>
-        <DnneMSBuildLogging>high</DnneMSBuildLogging>
-        <DnneAdditionalIncludeDirectories>
-            "$(MSBuildProjectDirectory)/src/c/"
-        </DnneAdditionalIncludeDirectories>
         <Title>UAssetAPI-DNNE</Title>
         <Description>UAssetAPI foreign function interface using DNNE.</Description>
         <PackageProjectUrl>https://github.com/tuokri/UAssetAPI-DNNE</PackageProjectUrl>
@@ -22,6 +12,48 @@
         <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
         <FileVersion>1.0.0.0</FileVersion>
+
+        <DnneBuildExports>true</DnneBuildExports>
+        <EnableDynamicLoading>true</EnableDynamicLoading>
+        <DnneNativeBinaryName>uassetapi_dnne</DnneNativeBinaryName>
+        <DnneAddGeneratedBinaryToProject>true</DnneAddGeneratedBinaryToProject>
+        <DnneMSBuildLogging>high</DnneMSBuildLogging>
+    </PropertyGroup>
+
+    <!-- Build machine OS is Windows. -->
+    <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' And '$(ForcedRuntimeIdentifier)' == '' ">
+        <!--suppress CheckTagEmptyBody -->
+        <RDIPart></RDIPart>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' And '$(ForcedRuntimeIdentifier)' != '' ">
+        <RDIPart>win-x64/</RDIPart>
+    </PropertyGroup>
+
+    <!-- Build machine OS is Linux. -->
+    <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' And '$(ForcedRuntimeIdentifier)' == '' ">
+        <!--suppress CheckTagEmptyBody -->
+        <RDIPart></RDIPart>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' And '$(ForcedRuntimeIdentifier)' != '' ">
+        <RDIPart>linux-x64/</RDIPart>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+        <CodeGenBin>UAssetAPI-DNNE.CodeGen.exe</CodeGenBin>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+        <CodeGenBin>UAssetAPI-DNNE.CodeGen</CodeGenBin>
+    </PropertyGroup>
+
+    <!-- NOTE: workaround for msbuild fuckery. -->
+    <!-- TODO: why the fuck is $(ProjectName) empty here? -->
+    <PropertyGroup>
+        <OutFuckingDir>$(SolutionDir)UAssetAPI-DNNE/bin/$(Configuration)/$(TargetFramework)/$(RDIPart)</OutFuckingDir>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <!-- TODO: $(MyOutDir) is empty here for whatever fucking reason. -->
+        <DnneAdditionalIncludeDirectories>$(MSBuildProjectDirectory)/src/c;$(OutFuckingDir)</DnneAdditionalIncludeDirectories>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -58,38 +90,21 @@
         <Message Text="Generating '$(OutDir)engineversion.h'" Importance="high"/>
         <MakeDir Directories="$(OutDir)"/>
 
-        <!-- Build machine OS is Windows. -->
-        <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' And '$(ForcedRuntimeIdentifier)' == '' ">
-            <!--suppress CheckTagEmptyBody -->
-            <RDIPart></RDIPart>
-        </PropertyGroup>
-        <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' And '$(ForcedRuntimeIdentifier)' != '' ">
-            <RDIPart>win-x64/</RDIPart>
-        </PropertyGroup>
-
-        <!-- Build machine OS is Linux. -->
-        <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' And '$(ForcedRuntimeIdentifier)' == '' ">
-            <!--suppress CheckTagEmptyBody -->
-            <RDIPart></RDIPart>
-        </PropertyGroup>
-        <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' And '$(ForcedRuntimeIdentifier)' != '' ">
-            <RDIPart>linux-x64/</RDIPart>
-        </PropertyGroup>
-
-        <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
-            <CodeGenBin>UAssetAPI-DNNE.CodeGen.exe</CodeGenBin>
-        </PropertyGroup>
-        <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
-            <CodeGenBin>UAssetAPI-DNNE.CodeGen</CodeGenBin>
-        </PropertyGroup>
-
         <!-- TODO: there has to be a cleaner and more robust way of doing this? -->
         <!-- TODO: this breaks if UAssetAPI-DNNE.CodeGen and UAssetAPI-DNNE target frameworks differ? -->
         <PropertyGroup>
             <CodeGenCmd>$(SolutionDir)UAssetAPI-DNNE.CodeGen/bin/$(Configuration)/$(TargetFramework)/$(RDIPart)$(CodeGenBin)</CodeGenCmd>
         </PropertyGroup>
 
-        <Exec Command="$(CodeGenCmd) --input=&quot;$(ProjectDir)src/templates/EngineVersion.liquid&quot; --output=&quot;$(OutDir)engineversion.h&quot; --render-action=EngineVersion"/>
+        <PropertyGroup>
+            <EngineVersionTemplateFile>$(ProjectDir)src/templates/EngineVersion.liquid</EngineVersionTemplateFile>
+        </PropertyGroup>
+
+        <PropertyGroup>
+            <EngineVersionHeaderFile>$(OutDir)uassetapi_dnne/engineversion.h</EngineVersionHeaderFile>
+        </PropertyGroup>
+
+        <Exec Command="$(CodeGenCmd) --input=&quot;$(EngineVersionTemplateFile)&quot; --output=&quot;$(EngineVersionHeaderFile)&quot; --render-action=EngineVersion"/>
     </Target>
 
     <Target Name="CleanEngineVersionHeader" BeforeTargets="CoreClean">

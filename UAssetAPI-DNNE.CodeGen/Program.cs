@@ -39,7 +39,7 @@ rootCommand.SetAction(parseResult =>
     var file = parseResult.GetValue(inputOption);
     if (file == null)
     {
-        throw new NullReferenceException("fileOption");
+        throw new NullReferenceException("Invalid fileOption.");
     }
 
     var outFile = parseResult.GetValue(outputOption);
@@ -75,6 +75,13 @@ rootCommand.SetAction(parseResult =>
             else
             {
                 Console.WriteLine(@$"Writing: '{outFile.FullName}'");
+                var dir = Path.GetDirectoryName(outFile.FullName);
+                if (dir == null)
+                {
+                    throw new NullReferenceException("Output file directory is null.");
+                }
+
+                Directory.CreateDirectory(dir);
                 File.WriteAllText(outFile.FullName, result);
             }
 
