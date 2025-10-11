@@ -15,6 +15,10 @@
         <DnneAdditionalIncludeDirectories>
             "$(MSBuildProjectDirectory)/src/c/"
         </DnneAdditionalIncludeDirectories>
+        <Title>UAssetAPI-DNNE</Title>
+        <Description>UAssetAPI foreign function interface using DNNE.</Description>
+        <PackageProjectUrl>https://github.com/tuokri/UAssetAPI-DNNE</PackageProjectUrl>
+        <Copyright>Copyright © Tuomo Kriikkula 2025</Copyright>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -27,6 +31,11 @@
 
     <ItemGroup>
         <ProjectReference Include="..\submodules\UAssetAPI\UAssetAPI\UAssetAPI.csproj"/>
+        <ProjectReference Include="..\UAssetAPI-DNNE.CodeGen\UAssetAPI-DNNE.CodeGen.csproj">
+            <Private>False</Private>
+            <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
+            <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+        </ProjectReference>
     </ItemGroup>
 
     <ItemGroup>
@@ -48,9 +57,8 @@
 
         <!-- TODO: there has to be a cleaner and more robust way of doing this! -->
         <!-- TODO: what happens in Linux builds with the .exe suffix? -->
-        <!-- TODO: how to make sure UAssetAPI-DNNE.CodeGen is actually built before we try to run this? -->
         <!-- TODO: this breaks if UAssetAPI-DNNE.CodeGen and UAssetAPI-DNNE target frameworks differ! -->
-        <!-- TODO: cleaning UAssetAPI-DNNE.CodeGen fails if the generator is still running during a rebuild! -->
+        <!-- TODO: cleaning UAssetAPI-DNNE.CodeGen can fail if the generator is still running during a rebuild! -->
         <Exec Command="$(SolutionDir)UAssetAPI-DNNE.CodeGen/bin/$(Configuration)/$(TargetFramework)/UAssetAPI-DNNE.CodeGen.exe --input=&quot;$(ProjectDir)src/templates/EngineVersion.liquid&quot; --output=&quot;$(OutDir)engineversion.h&quot; --render-action=EngineVersion"/>
     </Target>
 

@@ -6,6 +6,11 @@
         <RootNamespace>UAssetAPI_DNNE.CodeGen</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Title>UAssetAPI-DNNE.CodeGen</Title>
+        <Authors>Tuomo Kriikkula</Authors>
+        <Description>Code generation tool for the UAssetAPI-DNNE project.</Description>
+        <Copyright>Copyright © Tuomo Kriikkula 2025</Copyright>
+        <PackageProjectUrl>https://github.com/tuokri/UAssetAPI-DNNE</PackageProjectUrl>
     </PropertyGroup>
 
     <ItemGroup>
