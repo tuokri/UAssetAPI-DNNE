@@ -41,7 +41,7 @@ CsResult* CsSuccess(void* value)
     result->value = value;
     result->hasError = 0;
     return result;
-};
+}
 
 CsResult* CsError(const char* error)
 {
@@ -54,7 +54,7 @@ CsResult* CsError(const char* error)
     result->error = error;
     result->hasError = 1;
     return result;
-};
+}
 
 void* CsExpect(CsResult* result, const char* error)
 {
@@ -94,4 +94,4 @@ void CsFreeResult(CsResult* result)
     }
     free(result);
     result = NULL;
-};
+}
