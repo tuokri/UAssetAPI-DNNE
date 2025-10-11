@@ -44,10 +44,13 @@ jobs:
       - run: echo "DNNE_BUILD_EXPORTS=true" >> $GITHUB_ENV
         if: env.DNNE_BUILD_EXPORTS == '' || env.DNNE_BUILD_EXPORTS == null
 
+      - run: echo "DNNE_BUILD_EXPORTS=$DNNE_BUILD_EXPORTS"
+      - run: echo "DNNE_BUILD_EXPORTS=${{ env.DNNE_BUILD_EXPORTS }}"
+
       - name: Run dotnet build
         run: dotnet build --configuration ${{ matrix.configuration }}
           -p:ForcedRuntimeIdentifier=${{ matrix.forced_runtime_identifier }}
-          -p:DnneBuildExports=$DNNE_BUILD_EXPORTS
+          -p:DnneBuildExports=${{ env.DNNE_BUILD_EXPORTS }}
 
       - name: Archive build artifacts
         uses: actions/upload-artifact@v4
