@@ -1,0 +1,47 @@
+﻿name: Build dotnet project
+
+on:
+  push:
+    branches:
+      - "master"
+  pull_request:
+    branches:
+      - "master"
+
+jobs:
+  build:
+    env:
+      DNNE_BUILD_EXPORTS: true
+
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [ "Debug", "Release" ]
+        forced_runtime_identifier: [ "linux-x64", "win-x64" ]
+        os: [ "windows-latest", "ubuntu-latest" ]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: true
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          cache: true
+
+      - name: Display dotnet version
+        run: dotnet --version
+
+      - run: echo "DNNE_BUILD_EXPORTS=false" >> $GITHUB_ENV
+        if: ${{ (matrix.os == 'windows-latest') && (matrix.forced_runtime_identifier) != 'win-x64' }}
+
+      - run: echo "DNNE_BUILD_EXPORTS=false" >> $GITHUB_ENV
+        if: ${{ (matrix.os == 'ubuntu-latest') && (matrix.forced_runtime_identifier) != 'linux-x64' }}
+
+      - name: Run dotnet build
+        run: dotnet build --configuration ${{ matrix.configuration }}
+          -p:ForcedRuntimeIdentifier=linux-x64=${{ matrix.forced_runtime_identifier }}
+          -p:DnneBuildExports=${{ env.DNNE_BUILD_EXPORTS }}
