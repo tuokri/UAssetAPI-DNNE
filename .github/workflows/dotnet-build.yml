@@ -49,8 +49,9 @@ jobs:
           -p:ForcedRuntimeIdentifier=${{ matrix.forced_runtime_identifier }}
           -p:DnneBuildExports=${{ env.DNNE_BUILD_EXPORTS }}
 
-      - name: Archive UMB build artifacts
+      - name: Archive build artifacts
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: UAssetAPI-DNNE-${{ matrix.os }}-${{ matrix.configuration }}-${{ forced_runtime_identifier }}
           path: |
