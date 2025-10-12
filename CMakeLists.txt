@@ -43,13 +43,10 @@ cmake_print_variables(UASSETAPI_DNNE_BUILD_EXPORTS)
 cmake_print_variables(UASSETAPI_DNNE_FORCED_RUNTIME_IDENTIFIER)
 cmake_print_variables(UASSETAPI_DNNE_DOTNET_CMD)
 
-# TODO: after dotnet build, restructure generated .c and .h files.
-#   --> Copy dnne.h, etc. to uassetapi_dnne subdir.
-
 set(
     UASSETAPI_DNNE_C_SOURCES
     UAssetAPI-DNNE/src/c/uassetapi_dnne/result.c
-    ${UASSETAPI_DNNE_BINARY_DIR}/ # TODO?
+    ${UASSETAPI_DNNE_BINARY_DIR}/uassetapi_dnne/platform.c
 )
 
 set(
@@ -68,4 +65,14 @@ target_include_directories(
     uassetapi_dnne
     PUBLIC
     ${UASSETAPI_DNNE_INCLUDE_DIRS}
+)
+
+target_link_libraries(
+    uassetapi_dnne
+    PUBLIC
+    UAssetAPI-DNNE
+    PRIVATE
+    UAssetAPI
+    Newtonsoft.Json
+    ZstdSharp
 )
