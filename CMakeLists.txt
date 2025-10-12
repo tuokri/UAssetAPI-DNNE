@@ -16,11 +16,15 @@ option(UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_TO_OUT_DIR "Emit DNNE's platform
 
 # TODO: do we need these to be configurable?
 # TODO: if yes, maybe add option that skips this block?
-if(WIN32)
-    set(UASSETAPI_DNNE_FORCED_RUNTIME_IDENTIFIER "win-x64" CACHE STRING "UAssetAPI-DNNE build RuntimeIdentifier.")
-else()
-    set(UASSETAPI_DNNE_FORCED_RUNTIME_IDENTIFIER "linux-x64" CACHE STRING "UAssetAPI-DNNE build RuntimeIdentifier.")
-endif()
+if (WIN32)
+    set(
+        UASSETAPI_DNNE_FORCED_RUNTIME_IDENTIFIER "win-x64"
+        CACHE STRING "UAssetAPI-DNNE build RuntimeIdentifier.")
+else ()
+    set(
+        UASSETAPI_DNNE_FORCED_RUNTIME_IDENTIFIER "linux-x64"
+        CACHE STRING "UAssetAPI-DNNE build RuntimeIdentifier.")
+endif ()
 
 set(UASSETAPI_DNNE_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
 
