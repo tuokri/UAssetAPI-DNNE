@@ -90,6 +90,23 @@
         <DnneAdditionalIncludeDirectories>$(MSBuildProjectDirectory)/src/c;$(OutFuckingDir);$(OutDir)</DnneAdditionalIncludeDirectories>
     </PropertyGroup>
 
+    <Target Name="WriteDnneNetHostDirToFile"
+            Condition="'${CMakeOutDir}' != ''"
+            AfterTargets="DnneGenerateNativeExports"
+            Outputs="$(OutFuckingDir)DnneNetHostDir.txt"
+    >
+        <!-- This mirrors DNNE's $(DnneNetHostDir). -->
+        <PropertyGroup>
+            <_DnneNetHostDir>$(NetCoreTargetingPackRoot)/Microsoft.NETCore.App.Host.$(DnneRuntimeIdentifier)/$(BundledNETCoreAppPackageVersion)/runtimes/$(DnneRuntimeIdentifier)/native</_DnneNetHostDir>
+        </PropertyGroup>
+        <Message Text="_DnneNetHostDir='$(_DnneNetHostDir)'"/>
+        <WriteLinesToFile
+                File="$(OutFuckingDir)DnneNetHostDir.txt"
+                Lines="$([MSBuild]::NormalizePath($(_DnneNetHostDir)))"
+                Overwrite="true"
+        />
+    </Target>
+
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
