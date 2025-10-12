@@ -58,6 +58,7 @@ jobs:
         run: dotnet build --configuration ${{ matrix.configuration }}
           -p:ForcedRuntimeIdentifier=${{ matrix.forced_runtime_identifier }}
           -p:DnneBuildExports=${{ env.DNNE_BUILD_EXPORTS }}
+          --verbosity diagnostic
 
       - name: Archive build artifacts
         uses: actions/upload-artifact@v4
