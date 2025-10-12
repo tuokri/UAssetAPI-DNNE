@@ -156,12 +156,12 @@
 
     <Target Name="MoveGeneratedHeader"
             AfterTargets="DnneCopyGeneratedHeaders"
-            Inputs="$(OutFuckingDir)$(DnneNativeBinaryName).h"
+            Inputs="$(OutDir)$(DnneNativeBinaryName).h"
             Outputs="$(CodeGenDir)$(DnneNativeBinaryName).h"
     >
-        <Message Text="Move: '$(OutFuckingDir)$(DnneNativeBinaryName).h' -> '$(CodeGenDir)$(DnneNativeBinaryName).h'"
+        <Message Text="Move: '$(OutDir)$(DnneNativeBinaryName).h' -> '$(CodeGenDir)$(DnneNativeBinaryName).h'"
                  Importance="high"/>
-        <Move SourceFiles="$(OutFuckingDir)$(DnneNativeBinaryName).h"
+        <Move SourceFiles="$(OutDir)$(DnneNativeBinaryName).h"
               DestinationFiles="$(CodeGenDir)$(DnneNativeBinaryName).h"
         />
     </Target>
@@ -173,11 +173,11 @@
 
     <Target Name="MoveDnneHeader"
             AfterTargets="DnneCopyGeneratedHeaders"
-            Inputs="$(OutFuckingDir)dnne.h"
+            Inputs="$(OutDir)dnne.h"
             Outputs="$(CodeGenDir)dnne.h"
     >
-        <Message Text="Move: '$(OutFuckingDir)dnne.h' -> '$(CodeGenDir)dnne.h'" Importance="high"/>
-        <Move SourceFiles="$(OutFuckingDir)dnne.h"
+        <Message Text="Move: '$(OutDir)dnne.h' -> '$(CodeGenDir)dnne.h'" Importance="high"/>
+        <Move SourceFiles="$(OutDir)dnne.h"
               DestinationFiles="$(CodeGenDir)dnne.h"
         />
     </Target>
