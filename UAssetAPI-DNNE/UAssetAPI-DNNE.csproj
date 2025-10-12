@@ -75,6 +75,12 @@
     </PropertyGroup>
 
     <!-- NOTE: workaround for msbuild fuckery. -->
+    <!--    <PropertyGroup Condition=" $(SolutionDir) != '' ">-->
+    <!--        <SolutionPart>$(SolutionDir)</SolutionPart>-->
+    <!--    </PropertyGroup>-->
+    <!--    <PropertyGroup Condition=" $(SolutionDir) == '' ">-->
+    <!--        <SolutionPart></SolutionPart>-->
+    <!--    </PropertyGroup>-->
     <!-- TODO: why the fuck is $(ProjectName) empty here? -->
     <PropertyGroup Condition=" $(OutDir) == '' ">
         <OutFuckingDir>$(SolutionDir)UAssetAPI-DNNE/bin/$(Configuration)/$(TargetFramework)$(RDIPart)</OutFuckingDir>
@@ -88,7 +94,7 @@
 
     <PropertyGroup>
         <!-- TODO: $(MyOutDir) is empty here for whatever fucking reason. -->
-        <DnneAdditionalIncludeDirectories>$(MSBuildProjectDirectory)/src/c;$(OutFuckingDir)</DnneAdditionalIncludeDirectories>
+        <DnneAdditionalIncludeDirectories>$(MSBuildProjectDirectory)/src/c;$(OutFuckingDir);$(OutDir)</DnneAdditionalIncludeDirectories>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
