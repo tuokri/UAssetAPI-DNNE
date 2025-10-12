@@ -12,6 +12,7 @@ else ()
 endif ()
 
 option(UASSETAPI_DNNE_BUILD_EXPORTS "Run dotnet build step for DNNE exports." OFF)
+option(UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_TO_OUT_DIR "Emit DNNE's platform.c to build dir." ON)
 
 # TODO: do we need these to be configurable?
 # TODO: if yes, maybe add option that skips this block?
@@ -21,12 +22,6 @@ else()
     set(UASSETAPI_DNNE_FORCED_RUNTIME_IDENTIFIER "linux-x64" CACHE STRING "UAssetAPI-DNNE build RuntimeIdentifier.")
 endif()
 
-if(UASSETAPI_DNNE_BUILD_EXPORTS)
-    set(_DNNE_BUILD_EXPORTS true)
-else()
-    set(_DNNE_BUILD_EXPORTS false)
-endif()
-
 set(UASSETAPI_DNNE_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
 
 set(
@@ -34,7 +29,8 @@ set(
     dotnet build --verbosity detailed
     --configuration ${UASSETAPI_DNNE_DOTNET_CONFIGURATION}
     -p:ForcedRuntimeIdentifier=${UASSETAPI_DNNE_FORCED_RUNTIME_IDENTIFIER}
-    -p:DnneBuildExports=${_DNNE_BUILD_EXPORTS}
+    -p:DnneBuildExports=${DNNE_BUILD_EXPORTS}
+    -p:EmitDnnePlatformSourceToOutDir=${UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_TO_OUT_DIR}
     --output ${UASSETAPI_DNNE_BINARY_DIR}
 )
 

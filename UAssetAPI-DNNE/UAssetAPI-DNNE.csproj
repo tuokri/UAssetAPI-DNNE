@@ -21,22 +21,25 @@
         <DnneMSBuildLogging>high</DnneMSBuildLogging>
     </PropertyGroup>
 
+    <!-- NOTE: RDIPartCodeGenBin is used to call the right CodeGen binary,
+         depending on the build machine OS. -->
+
     <!-- Build machine OS is Windows. -->
     <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' And '$(ForcedRuntimeIdentifier)' == '' ">
         <!--suppress CheckTagEmptyBody -->
-        <RDIPart></RDIPart>
+        <RDIPartCodeGenBin>/</RDIPartCodeGenBin>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' And '$(ForcedRuntimeIdentifier)' != '' ">
-        <RDIPart>win-x64/</RDIPart>
+        <RDIPartCodeGenBin>win-x64/</RDIPartCodeGenBin>
     </PropertyGroup>
 
     <!-- Build machine OS is Linux. -->
     <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' And '$(ForcedRuntimeIdentifier)' == '' ">
         <!--suppress CheckTagEmptyBody -->
-        <RDIPart></RDIPart>
+        <RDIPartCodeGenBin></RDIPartCodeGenBin>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' And '$(ForcedRuntimeIdentifier)' != '' ">
-        <RDIPart>linux-x64/</RDIPart>
+        <RDIPartCodeGenBin>linux-x64/</RDIPartCodeGenBin>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
@@ -46,11 +49,36 @@
         <CodeGenBin>UAssetAPI-DNNE.CodeGen</CodeGenBin>
     </PropertyGroup>
 
+    <!-- Build machine OS is Windows. -->
+    <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' And '$(ForcedRuntimeIdentifier)' == '' ">
+        <!--suppress CheckTagEmptyBody -->
+        <RDIPartCodeGenBin>/</RDIPartCodeGenBin>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' And '$(ForcedRuntimeIdentifier)' != '' ">
+        <RDIPartCodeGenBin>win-x64/</RDIPartCodeGenBin>
+    </PropertyGroup>
+
+    <!-- Build machine OS is Linux. -->
+    <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' And '$(ForcedRuntimeIdentifier)' == '' ">
+        <!--suppress CheckTagEmptyBody -->
+        <RDIPartCodeGenBin></RDIPartCodeGenBin>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' And '$(ForcedRuntimeIdentifier)' != '' ">
+        <RDIPartCodeGenBin>linux-x64/</RDIPartCodeGenBin>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(ForcedRuntimeIdentifier)' == '' ">
+        <RDIPart>/</RDIPart>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(ForcedRuntimeIdentifier)' != '' ">
+        <RDIPart>/$(ForcedRuntimeIdentifier)/</RDIPart>
+    </PropertyGroup>
+
     <!-- NOTE: workaround for msbuild fuckery. -->
     <!-- TODO: why the fuck is $(ProjectName) empty here? -->
     <PropertyGroup>
-        <OutFuckingDir>$(SolutionDir)UAssetAPI-DNNE/bin/$(Configuration)/$(TargetFramework)/$(RDIPart)</OutFuckingDir>
-        <CodeGenDir>$(OutDir)uassetapi_dnne</CodeGenDir>
+        <OutFuckingDir>$(SolutionDir)UAssetAPI-DNNE/bin/$(Configuration)/$(TargetFramework)$(RDIPart)</OutFuckingDir>
+        <CodeGenDir>$(OutFuckingDir)$(DnneNativeBinaryName)/</CodeGenDir>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -79,10 +107,11 @@
         <PackageReference Include="DNNE" Version="2.0.7"/>
     </ItemGroup>
 
-    <!-- TODO: IMPORTANT: Add option to emit DNNE's platform.c to build dir! -->
     <Target
-            Name="ReadDNNEVersion" BeforeTargets="BeforeBuild"
-            Condition="true"
+            Name="CopyDnnePlatformSourceToOutDir"
+            BeforeTargets="BeforeBuild"
+            Condition="$(EmitDnnePlatformSourceToOutDir)"
+            Outputs="$(CodeGenDir)platform.c"
     >
         <XmlPeek
                 XmlInputPath="$(MSBuildProjectFullPath)"
@@ -90,14 +119,20 @@
             <Output TaskParameter="Result" PropertyName="DNNEVersion"/>
         </XmlPeek>
 
-        <!-- TODO: IMPORTANT: Add option to emit DNNE's platform.c to build dir! -->
         <PropertyGroup>
-            <DnnePlatformSource>"$(NuGetPackageRoot)DNNE/$(DNNEVersion)/tools/platform/platform.c"</DnnePlatformSource>
+            <DnnePlatformSource>$(NuGetPackageRoot)DNNE/$(DNNEVersion)/tools/platform/platform.c</DnnePlatformSource>
         </PropertyGroup>
 
-        <Message Text="DNNE package version: $(DNNEVersion)" Importance="High"/>
-        <Message Text="DNNEVersion='$(DNNEVersion)'"/>
-        <Message Text="DnnePlatformSource='$(DnnePlatformSource)'" Importance="high"/>
+        <Message Text="Copy: '$(DnnePlatformSource)' -> '$(CodeGenDir)'" Importance="high"/>
+        <Copy
+                SourceFiles="$(DnnePlatformSource)"
+                DestinationFolder="$(CodeGenDir)"
+        />
+    </Target>
+
+    <Target Name="CleanDnnePlatformSource"
+            BeforeTargets="CoreClean">
+        <Delete Files="$(CodeGenDir)platform.c"/>
     </Target>
 
     <ItemGroup>
@@ -105,26 +140,56 @@
     </ItemGroup>
 
     <PropertyGroup>
-        <CodeGenDir>$(OutFuckingDir)uassetapi_dnne</CodeGenDir>
+        <EngineVersionHeaderFile>$(CodeGenDir)engineversion.h</EngineVersionHeaderFile>
     </PropertyGroup>
 
-    <PropertyGroup>
-        <EngineVersionHeaderFile>$(CodeGenDir)/engineversion.h</EngineVersionHeaderFile>
-    </PropertyGroup>
+    <Target Name="MoveGeneratedHeader"
+            AfterTargets="DnneCopyGeneratedHeaders"
+            Inputs="$(OutFuckingDir)$(DnneNativeBinaryName).h"
+            Outputs="$(CodeGenDir)$(DnneNativeBinaryName).h"
+    >
+        <Message Text="Move: '$(OutFuckingDir)$(DnneNativeBinaryName).h' -> '$(CodeGenDir)$(DnneNativeBinaryName).h'"
+                 Importance="high"/>
+        <Move SourceFiles="$(OutFuckingDir)$(DnneNativeBinaryName).h"
+              DestinationFiles="$(CodeGenDir)$(DnneNativeBinaryName).h"
+        />
+    </Target>
+
+    <Target Name="CleanMovedGeneratedHeader"
+            BeforeTargets="CoreClean">
+        <Delete Files="$(CodeGenDir)$(DnneNativeBinaryName).h"/>
+    </Target>
+
+    <Target Name="MoveDnneHeader"
+            AfterTargets="DnneCopyGeneratedHeaders"
+            Inputs="$(OutFuckingDir)dnne.h"
+            Outputs="$(CodeGenDir)dnne.h"
+    >
+        <Message Text="Move: '$(OutFuckingDir)dnne.h' -> '$(CodeGenDir)dnne.h'" Importance="high"/>
+        <Move SourceFiles="$(OutFuckingDir)dnne.h"
+              DestinationFiles="$(CodeGenDir)dnne.h"
+        />
+    </Target>
+
+    <Target Name="CleanMovedDnneHeader"
+            BeforeTargets="CoreClean">
+        <Delete Files="$(CodeGenDir)dnne.h"/>
+    </Target>
 
     <Target Name="GenerateEngineVersionHeader"
             AfterTargets="CoreCompile"
             BeforeTargets="DnneBuildNativeExports"
             Inputs="$(ProjectDir)src/templates/EngineVersion.liquid"
-            Outputs="$(CodeGenDir)/engineversion.h">
+            Outputs="$(EngineVersionHeaderFile)">
 
-        <Message Text="Generating '$(CodeGenDir)/engineversion.h'" Importance="high"/>
+        <Message Text="Generating '$(EngineVersionHeaderFile)'" Importance="high"/>
         <MakeDir Directories="$(CodeGenDir)"/>
 
         <!-- TODO: there has to be a cleaner and more robust way of doing this? -->
         <!-- TODO: this breaks if UAssetAPI-DNNE.CodeGen and UAssetAPI-DNNE target frameworks differ? -->
         <PropertyGroup>
-            <CodeGenCmd>$(SolutionDir)UAssetAPI-DNNE.CodeGen/bin/$(Configuration)/$(TargetFramework)/$(RDIPart)$(CodeGenBin)</CodeGenCmd>
+            <!-- NOTE: Run the code generator appropriate for the **BUILD MACHINE'S OS** -->
+            <CodeGenCmd>$(SolutionDir)UAssetAPI-DNNE.CodeGen/bin/$(Configuration)/$(TargetFramework)/$(RDIPartCodeGenBin)$(CodeGenBin)</CodeGenCmd>
         </PropertyGroup>
 
         <PropertyGroup>
@@ -134,7 +199,8 @@
         <Exec Command="$(CodeGenCmd) --input=&quot;$(EngineVersionTemplateFile)&quot; --output=&quot;$(EngineVersionHeaderFile)&quot; --render-action=EngineVersion"/>
     </Target>
 
-    <Target Name="CleanEngineVersionHeader" BeforeTargets="CoreClean">
+    <Target Name="CleanEngineVersionHeader"
+            BeforeTargets="CoreClean">
         <Delete Files="$(EngineVersionHeaderFile)"/>
     </Target>
 

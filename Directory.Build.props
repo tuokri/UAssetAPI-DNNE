@@ -15,4 +15,8 @@
     <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' And '$(ForcedRuntimeIdentifier)' == 'win-x64' ">
         <DnneBuildExports>false</DnneBuildExports>
     </PropertyGroup>
+
+    <PropertyGroup>
+        <EmitDnnePlatformSourceToOutDir>false</EmitDnnePlatformSourceToOutDir>
+    </PropertyGroup>
 </Project>
