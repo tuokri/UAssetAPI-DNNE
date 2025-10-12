@@ -89,7 +89,7 @@
         <OutFuckingDir>$(OutDir)</OutFuckingDir>
     </PropertyGroup>
     <PropertyGroup>
-        <CodeGenDir>$(OutFuckingDir)$(DnneNativeBinaryName)/</CodeGenDir>
+        <CodeGenDir>$(OutDir)$(DnneNativeBinaryName)/</CodeGenDir>
     </PropertyGroup>
 
     <PropertyGroup>
