@@ -9,4 +9,9 @@
     <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' And '$(ForcedRuntimeIdentifier)' != '' ">
         <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
     </PropertyGroup>
+
+    <PropertyGroup>
+        <!--suppress CheckTagEmptyBody -->
+        <CMakeOutDir></CMakeOutDir>
+    </PropertyGroup>
 </Project>

@@ -74,19 +74,12 @@
         <RDIPart>/$(ForcedRuntimeIdentifier)/</RDIPart>
     </PropertyGroup>
 
-    <!-- NOTE: workaround for msbuild fuckery. -->
-    <!--    <PropertyGroup Condition=" $(SolutionDir) != '' ">-->
-    <!--        <SolutionPart>$(SolutionDir)</SolutionPart>-->
-    <!--    </PropertyGroup>-->
-    <!--    <PropertyGroup Condition=" $(SolutionDir) == '' ">-->
-    <!--        <SolutionPart></SolutionPart>-->
-    <!--    </PropertyGroup>-->
     <!-- TODO: why the fuck is $(ProjectName) empty here? -->
-    <PropertyGroup Condition=" $(OutDir) == '' ">
+    <PropertyGroup Condition=" '$(CMakeOutDir)' == '' ">
         <OutFuckingDir>$(SolutionDir)UAssetAPI-DNNE/bin/$(Configuration)/$(TargetFramework)$(RDIPart)</OutFuckingDir>
     </PropertyGroup>
-    <PropertyGroup Condition=" $(OutDir) != '' ">
-        <OutFuckingDir>$(OutDir)</OutFuckingDir>
+    <PropertyGroup Condition=" '$(CMakeOutDir)' != '' ">
+        <OutFuckingDir>$(CMakeOutDir)</OutFuckingDir>
     </PropertyGroup>
     <PropertyGroup>
         <CodeGenDir>$(OutFuckingDir)$(DnneNativeBinaryName)/</CodeGenDir>
