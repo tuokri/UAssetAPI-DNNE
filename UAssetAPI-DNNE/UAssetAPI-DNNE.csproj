@@ -17,7 +17,7 @@
         <DnneBuildExports>true</DnneBuildExports>
         <EnableDynamicLoading>true</EnableDynamicLoading>
         <DnneNativeBinaryName>uassetapi_dnne</DnneNativeBinaryName>
-        <DnneAddGeneratedBinaryToProject>true</DnneAddGeneratedBinaryToProject>
+        <DnneAddGeneratedBinaryToProject>false</DnneAddGeneratedBinaryToProject>
         <DnneMSBuildLogging>high</DnneMSBuildLogging>
     </PropertyGroup>
 
@@ -50,6 +50,7 @@
     <!-- TODO: why the fuck is $(ProjectName) empty here? -->
     <PropertyGroup>
         <OutFuckingDir>$(SolutionDir)UAssetAPI-DNNE/bin/$(Configuration)/$(TargetFramework)/$(RDIPart)</OutFuckingDir>
+        <CodeGenDir>$(OutDir)uassetapi_dnne</CodeGenDir>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -78,18 +79,47 @@
         <PackageReference Include="DNNE" Version="2.0.7"/>
     </ItemGroup>
 
+    <!-- TODO: IMPORTANT: Add option to emit DNNE's platform.c to build dir! -->
+    <Target
+            Name="ReadDNNEVersion" BeforeTargets="BeforeBuild"
+            Condition="true"
+    >
+        <XmlPeek
+                XmlInputPath="$(MSBuildProjectFullPath)"
+                Query="//PackageReference[@Include='DNNE']/@Version">
+            <Output TaskParameter="Result" PropertyName="DNNEVersion"/>
+        </XmlPeek>
+
+        <!-- TODO: IMPORTANT: Add option to emit DNNE's platform.c to build dir! -->
+        <PropertyGroup>
+            <DnnePlatformSource>"$(NuGetPackageRoot)DNNE/$(DNNEVersion)/tools/platform/platform.c"</DnnePlatformSource>
+        </PropertyGroup>
+
+        <Message Text="DNNE package version: $(DNNEVersion)" Importance="High"/>
+        <Message Text="DNNEVersion='$(DNNEVersion)'"/>
+        <Message Text="DnnePlatformSource='$(DnnePlatformSource)'" Importance="high"/>
+    </Target>
+
     <ItemGroup>
         <Folder Include="src\c\"/>
     </ItemGroup>
+
+    <PropertyGroup>
+        <CodeGenDir>$(OutFuckingDir)uassetapi_dnne</CodeGenDir>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <EngineVersionHeaderFile>$(CodeGenDir)/engineversion.h</EngineVersionHeaderFile>
+    </PropertyGroup>
 
     <Target Name="GenerateEngineVersionHeader"
             AfterTargets="CoreCompile"
             BeforeTargets="DnneBuildNativeExports"
             Inputs="$(ProjectDir)src/templates/EngineVersion.liquid"
-            Outputs="$(OutDir)engineversion.h">
+            Outputs="$(CodeGenDir)/engineversion.h">
 
-        <Message Text="Generating '$(OutDir)engineversion.h'" Importance="high"/>
-        <MakeDir Directories="$(OutDir)"/>
+        <Message Text="Generating '$(CodeGenDir)/engineversion.h'" Importance="high"/>
+        <MakeDir Directories="$(CodeGenDir)"/>
 
         <!-- TODO: there has to be a cleaner and more robust way of doing this? -->
         <!-- TODO: this breaks if UAssetAPI-DNNE.CodeGen and UAssetAPI-DNNE target frameworks differ? -->
@@ -101,15 +131,11 @@
             <EngineVersionTemplateFile>$(ProjectDir)src/templates/EngineVersion.liquid</EngineVersionTemplateFile>
         </PropertyGroup>
 
-        <PropertyGroup>
-            <EngineVersionHeaderFile>$(OutDir)uassetapi_dnne/engineversion.h</EngineVersionHeaderFile>
-        </PropertyGroup>
-
         <Exec Command="$(CodeGenCmd) --input=&quot;$(EngineVersionTemplateFile)&quot; --output=&quot;$(EngineVersionHeaderFile)&quot; --render-action=EngineVersion"/>
     </Target>
 
     <Target Name="CleanEngineVersionHeader" BeforeTargets="CoreClean">
-        <Delete Files="$(OutDir)engineversion.h"/>
+        <Delete Files="$(EngineVersionHeaderFile)"/>
     </Target>
 
 </Project>
