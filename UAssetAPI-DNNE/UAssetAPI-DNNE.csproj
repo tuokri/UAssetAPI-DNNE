@@ -79,7 +79,7 @@
         <OutFuckingDir>$(SolutionDir)UAssetAPI-DNNE/bin/$(Configuration)/$(TargetFramework)$(RDIPart)</OutFuckingDir>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(CMakeOutDir)' != '' ">
-        <OutFuckingDir>$(CMakeOutDir)</OutFuckingDir>
+        <OutFuckingDir>$(CMakeOutDir)/</OutFuckingDir>
     </PropertyGroup>
     <PropertyGroup>
         <CodeGenDir>$(OutFuckingDir)$(DnneNativeBinaryName)/</CodeGenDir>
