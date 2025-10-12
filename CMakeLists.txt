@@ -31,7 +31,7 @@ set(UASSETAPI_DNNE_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
 
 set(
     UASSETAPI_DNNE_DOTNET_CMD
-    dotnet build --verbosity diagnostic
+    dotnet build --verbosity detailed
     --configuration ${UASSETAPI_DNNE_DOTNET_CONFIGURATION}
     -p:ForcedRuntimeIdentifier=${UASSETAPI_DNNE_FORCED_RUNTIME_IDENTIFIER}
     -p:DnneBuildExports=${_DNNE_BUILD_EXPORTS}
