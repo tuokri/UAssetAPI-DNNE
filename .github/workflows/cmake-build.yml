@@ -35,3 +35,5 @@ jobs:
 
       - name: Display dotnet version
         run: dotnet --version
+
+      - run: cmake --version
