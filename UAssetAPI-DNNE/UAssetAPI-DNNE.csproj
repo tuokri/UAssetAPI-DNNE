@@ -76,8 +76,13 @@
 
     <!-- NOTE: workaround for msbuild fuckery. -->
     <!-- TODO: why the fuck is $(ProjectName) empty here? -->
-    <PropertyGroup>
+    <PropertyGroup Condition=" $(OutDir) == '' ">
         <OutFuckingDir>$(SolutionDir)UAssetAPI-DNNE/bin/$(Configuration)/$(TargetFramework)$(RDIPart)</OutFuckingDir>
+    </PropertyGroup>
+    <PropertyGroup Condition=" $(OutDir) != '' ">
+        <OutFuckingDir>$(OutDir)</OutFuckingDir>
+    </PropertyGroup>
+    <PropertyGroup>
         <CodeGenDir>$(OutFuckingDir)$(DnneNativeBinaryName)/</CodeGenDir>
     </PropertyGroup>
 
