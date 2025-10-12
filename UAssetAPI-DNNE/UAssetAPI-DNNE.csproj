@@ -36,7 +36,7 @@
     <!-- Build machine OS is Linux. -->
     <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' And '$(ForcedRuntimeIdentifier)' == '' ">
         <!--suppress CheckTagEmptyBody -->
-        <RDIPartCodeGenBin></RDIPartCodeGenBin>
+        <RDIPartCodeGenBin>/</RDIPartCodeGenBin>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' And '$(ForcedRuntimeIdentifier)' != '' ">
         <RDIPartCodeGenBin>linux-x64/</RDIPartCodeGenBin>
@@ -196,11 +196,19 @@
         <Message Text="Generating '$(EngineVersionHeaderFile)'" Importance="high"/>
         <MakeDir Directories="$(CodeGenDir)"/>
 
+        <!-- NOTE: hack for non-solution builds! -->
+        <PropertyGroup Condition=" '$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*' ">
+            <CodeGenBinDir>$(OutDir)</CodeGenBinDir>
+        </PropertyGroup>
+        <PropertyGroup Condition=" '$(CodeGenBinDir)' == '' ">
+            <CodeGenBinDir>$(SolutionDir)UAssetAPI-DNNE.CodeGen/bin/$(Configuration)/$(TargetFramework)/$(RDIPartCodeGenBin)</CodeGenBinDir>
+        </PropertyGroup>
+
         <!-- TODO: there has to be a cleaner and more robust way of doing this? -->
         <!-- TODO: this breaks if UAssetAPI-DNNE.CodeGen and UAssetAPI-DNNE target frameworks differ? -->
         <PropertyGroup>
             <!-- NOTE: Run the code generator appropriate for the **BUILD MACHINE'S OS** -->
-            <CodeGenCmd>$(SolutionDir)UAssetAPI-DNNE.CodeGen/bin/$(Configuration)/$(TargetFramework)/$(RDIPartCodeGenBin)$(CodeGenBin)</CodeGenCmd>
+            <CodeGenCmd>$(CodeGenBinDir)$(CodeGenBin)</CodeGenCmd>
         </PropertyGroup>
 
         <PropertyGroup>
