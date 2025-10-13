@@ -67,11 +67,11 @@ Result and thereby consume it:
 #include <stdint.h>
 
 #ifdef __cplusplus
-#define UASSETAPI_DNNE__EXTERN_C extern "C"
-UASSETAPI_DNNE__EXTERN_C
+#define UASSETAPI_DNNE_EXTERN_C extern "C"
+UASSETAPI_DNNE_EXTERN_C
     {
 #else
-#define UASSETAPI_DNNE__EXTERN_C
+#define UASSETAPI_DNNE_EXTERN_C
 #endif
 
 typedef struct

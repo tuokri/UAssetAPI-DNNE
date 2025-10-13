@@ -30,10 +30,15 @@ SOFTWARE.
 
 #include "uassetapi_dnne/result.h"
 
+#ifdef __cplusplus
+UASSETAPI_DNNE_EXTERN_C
+{
+#endif
+
 CsResult* CsSuccess(void* value)
 {
     CsResult* result = NULL;
-    if (result = malloc(sizeof(CsResult)), result == NULL)
+    if (result = (CsResult*) malloc(sizeof(CsResult)), result == NULL)
     {
         fprintf(stderr, "UAssetAPI-DNNE-result: failed to allocate result for success\n");
         exit(EXIT_FAILURE);
@@ -46,7 +51,7 @@ CsResult* CsSuccess(void* value)
 CsResult* CsError(const char* error)
 {
     CsResult* result = NULL;
-    if (result = malloc(sizeof(CsResult)), result == NULL)
+    if (result = (CsResult*) malloc(sizeof(CsResult)), result == NULL)
     {
         fprintf(stderr, "UAssetAPI-DNNE-result: failed to allocate result for error\n");
         exit(EXIT_FAILURE);
@@ -95,3 +100,7 @@ void CsFreeResult(CsResult* result)
     free(result);
     result = NULL;
 }
+
+#ifdef __cplusplus
+}
+#endif

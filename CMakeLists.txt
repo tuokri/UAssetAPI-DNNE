@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 4.0)
-project(UAssetAPI-DNNE C CXX)
+project(UAssetAPI-DNNE CXX)
 
 include(CMakePrintHelpers)
 
@@ -12,7 +12,10 @@ else ()
 endif ()
 
 option(UASSETAPI_DNNE_BUILD_EXPORTS "Run dotnet build step for DNNE exports." OFF)
-option(UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_TO_OUT_DIR "Emit DNNE's platform.c to build dir." ON)
+# TODO: these 2 names are misleading.
+# See: https://github.com/AaronRobinsonMSFT/DNNE/blob/363a27a004c5e46b66cb39f6eaba756eed5edb27/src/msbuild/DNNE.BuildTasks/CreateCompileCommand.cs#L81-L82
+option(UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_C_TO_OUT_DIR "Emit DNNE's platform.c (C) to build dir." ON)
+option(UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_CPP_TO_OUT_DIR "Emit DNNE's platform_4.cpp (C++) to build dir." OFF)
 
 # TODO: do we need these to be configurable?
 # TODO: if yes, maybe add option that skips this block?
@@ -26,14 +29,6 @@ else ()
         CACHE STRING "UAssetAPI-DNNE build RuntimeIdentifier.")
 endif ()
 
-# TODO: this should really be passed in from a CMake preset!
-# TODO: that would cross-compiling the dotnet project.
-if (WIN32)
-    set(DNNE_ASSEMBLY_NAME DNNE_WINDOWS)
-elseif (LINUX)
-    set(DNNE_ASSEMBLY_NAME DNNE_LINUX)
-endif ()
-
 set(UASSETAPI_DNNE_BINARY_DIR "${CMAKE_BINARY_DIR}/generated")
 
 set(
@@ -42,7 +37,8 @@ set(
     --configuration ${UASSETAPI_DNNE_DOTNET_CONFIGURATION}
     -p:ForcedRuntimeIdentifier=${UASSETAPI_DNNE_FORCED_RUNTIME_IDENTIFIER}
     -p:DnneBuildExports=${DNNE_BUILD_EXPORTS}
-    -p:EmitDnnePlatformSourceToOutDir=${UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_TO_OUT_DIR}
+    -p:EmitDnnePlatformSourceCToOutDir=${UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_CPP_TO_OUT_DIR}
+    -p:EmitDnnePlatformSourceCPPToOutDir=${UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_CPP_TO_OUT_DIR}
     -p:CMakeOutDir="${UASSETAPI_DNNE_BINARY_DIR}"
     --output "${UASSETAPI_DNNE_BINARY_DIR}"
 )
@@ -69,7 +65,8 @@ cmake_print_variables(UASSETAPI_DNNE_BUILD_EXPORTS)
 cmake_print_variables(UASSETAPI_DNNE_FORCED_RUNTIME_IDENTIFIER)
 cmake_print_variables(UASSETAPI_DNNE_DOTNET_CMD)
 cmake_print_variables(UASSETAPI_DNNE_BINARY_DIR)
-cmake_print_variables(UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_TO_OUT_DIR)
+cmake_print_variables(UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_C_TO_OUT_DIR)
+cmake_print_variables(UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_CPP_TO_OUT_DIR)
 cmake_print_variables(UASSETAPI_DNNE_PROJECT_SOURCES)
 cmake_print_variables(DNNE_ASSEMBLY_NAME)
 
@@ -87,6 +84,10 @@ set(
     UASSETAPI_DNNE_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/src/c
     ${UASSETAPI_DNNE_BINARY_DIR}
+    # NOTE: this is needed because uassetapi_dnne.h fails to find dnne.h
+    #       when DNNE_COMPILE_AS_SOURCE is defined. It would be nice to avoid,
+    #       but it is the best workaround currently.
+    ${UASSETAPI_DNNE_BINARY_DIR}/uassetapi_dnne
 )
 
 set(
@@ -107,26 +108,28 @@ add_custom_command(
     OUTPUT
     ${UASSETAPI_DNNE_GENERATED_SOURCES}
     ${UASSETAPI_DNNE_GENERATED_HEADERS}
-    DEPENDS ${UASSETAPI_DNNE_PROJECT_SOURCES} ${UASSETAPI_DNNE_BINARY_DIR}/DnneNetHostDir.txt
+    DEPENDS ${UASSETAPI_DNNE_PROJECT_SOURCES}
     COMMAND ${UASSETAPI_DNNE_DOTNET_CMD}
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE
-    COMMENT "UASSETAPI_DNNE_NETHOST_DIR=${UASSETAPI_DNNE_NETHOST_DIR}"
 )
 
-add_custom_target(
-    uassetapi_dnne_read_nethost_dir_from_file
-    ALL
-    DEPENDS
-    ${UASSETAPI_DNNE_BINARY_DIR}/DnneNetHostDir.txt
-)
-add_custom_command(
-    OUTPUT ${UASSETAPI_DNNE_BINARY_DIR}/DnneNetHostDir.txt
-    COMMAND msbuild -target:WriteDnneNetHostDirToFile -p:CMakeOutDir="${UASSETAPI_DNNE_BINARY_DIR}"
-    # TODO: instead of using read_and_store.cmake here, we should probably use
-    #       execute_process and read the file contents into an OUTPUT_VARIABLE!
-    COMMAND ${CMAKE_COMMAND} -DINPUT_FILE="${UASSETAPI_DNNE_BINARY_DIR}/DnneNetHostDir.txt"
-    -DDEST_VARIABLE=UASSETAPI_DNNE_NETHOST_DIR -P ${CMAKE_SOURCE_DIR}/cmake/read_and_store.cmake
+execute_process(
+    COMMAND msbuild
+    -target:WriteDnneNetHostDirToFile
+    -p:CMakeOutDir=${UASSETAPI_DNNE_BINARY_DIR}
+    -p:DnneRuntimeIdentifier=${UASSETAPI_DNNE_FORCED_RUNTIME_IDENTIFIER}
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE
+    COMMAND_ECHO STDOUT
+    COMMAND_ERROR_IS_FATAL ANY
+    TIMEOUT 10
+)
+file(STRINGS "${UASSETAPI_DNNE_BINARY_DIR}/DnneNetHostDir.txt" UASSETAPI_DNNE_NETHOST_DIR)
+cmake_path(SET UASSETAPI_DNNE_NETHOST_DIR NORMALIZE ${UASSETAPI_DNNE_NETHOST_DIR})
+message(STATUS "UASSETAPI_DNNE_NETHOST_DIR='${UASSETAPI_DNNE_NETHOST_DIR}'")
+
+set_source_files_properties(
+    ${UASSETAPI_DNNE_BINARY_DIR}/uassetapi_dnne/platform.c
+    PROPERTIES LANGUAGE CXX
 )
 
 add_library(
@@ -138,36 +141,67 @@ add_library(
 
 target_compile_definitions(
     uassetapi_dnne
-    PRIVATE
-    DNNE_ASSEMBLY_NAME=${DNNE_ASSEMBLY_NAME}
+    PUBLIC
+    DNNE_ASSEMBLY_NAME=UAssetAPI-DNNE
+    DNNE_COMPILE_AS_SOURCE
 )
 
 target_include_directories(
     uassetapi_dnne
     PUBLIC
     ${UASSETAPI_DNNE_INCLUDE_DIRS}
+    PRIVATE
     ${UASSETAPI_DNNE_NETHOST_DIR}
 )
 
-# TODO: this is not right.
+cmake_path(
+    SET
+    UASSETAPI_DNNE_NETHOSTLIB_PATH
+    NORMALIZE
+    ${UASSETAPI_DNNE_NETHOST_DIR}/libnethost.lib
+)
+
 target_link_libraries(
     uassetapi_dnne
-    PUBLIC
-    UAssetAPI-DNNE
     PRIVATE
-    UAssetAPI
-    Newtonsoft.Json
-    ZstdSharp
-    nethost
+    ${UASSETAPI_DNNE_NETHOSTLIB_PATH}
 )
 
 add_dependencies(
     uassetapi_dnne
-    uassetapi_dnne_read_nethost_dir_from_file
     uassetapi_dnne_codegen
 )
 
 set_target_properties(
     uassetapi_dnne
     PROPERTIES ADDITIONAL_CLEAN_FILES ${UASSETAPI_DNNE_BINARY_DIR}
+)
+
+# TODO: these run currently even if nothing was built.
+# TODO: try to make these only run if something was actually built!
+add_custom_command(
+    TARGET uassetapi_dnne_codegen POST_BUILD
+    COMMAND "${CMAKE_COMMAND}"
+    -DDLL_SOURCE_DIR=${UASSETAPI_DNNE_BINARY_DIR}
+    -DDLL_DEST_DIR=${CMAKE_BINARY_DIR}
+    -DINPUT_JSON_FILE_PATH="${UASSETAPI_DNNE_BINARY_DIR}/UAssetAPI.deps.json"
+    -P "${PROJECT_SOURCE_DIR}/cmake/copy_deps_dlls.cmake"
+)
+add_custom_command(
+    TARGET uassetapi_dnne_codegen POST_BUILD
+    COMMAND "${CMAKE_COMMAND}"
+    -DDLL_SOURCE_DIR=${UASSETAPI_DNNE_BINARY_DIR}
+    -DDLL_DEST_DIR=${CMAKE_BINARY_DIR}
+    -DINPUT_JSON_FILE_PATH="${UASSETAPI_DNNE_BINARY_DIR}/UAssetAPI-DNNE.deps.json"
+    -P "${PROJECT_SOURCE_DIR}/cmake/copy_deps_dlls.cmake"
+)
+
+add_custom_command(
+    TARGET uassetapi_dnne_codegen POST_BUILD
+    COMMAND "${CMAKE_COMMAND}" -E copy
+    ${UASSETAPI_DNNE_BINARY_DIR}/UAssetAPI-DNNE.dll
+    ${CMAKE_BINARY_DIR}/UAssetAPI-DNNE.dll
+    COMMAND "${CMAKE_COMMAND}" -E copy
+    ${UASSETAPI_DNNE_BINARY_DIR}/UAssetAPI-DNNE.runtimeconfig.json
+    ${CMAKE_BINARY_DIR}/UAssetAPI-DNNE.runtimeconfig.json
 )
