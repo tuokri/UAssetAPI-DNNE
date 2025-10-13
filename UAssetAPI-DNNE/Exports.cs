@@ -33,7 +33,7 @@ public class Exports
         """
     )]
     [UnmanagedCallersOnly(EntryPoint = "UAssetAPI_ToJson")]
-    [return: DNNE.C99Type("struct CsResult*")]
+    [return: DNNE.C99Type("CsResult*")]
     public static unsafe CsResult* ToJson(int engineVersion)
     {
         var result = new CsResult();
