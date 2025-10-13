@@ -17,6 +17,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <EmitDnnePlatformSourceToOutDir>false</EmitDnnePlatformSourceToOutDir>
+        <EmitDnnePlatformSourceCToOutDir>false</EmitDnnePlatformSourceCToOutDir>
+        <EmitDnnePlatformSourceCPPToOutDir>false</EmitDnnePlatformSourceCPPToOutDir>
     </PropertyGroup>
 </Project>
