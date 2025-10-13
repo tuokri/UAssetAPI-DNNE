@@ -131,7 +131,7 @@
     <Target
             Name="CopyDnnePlatformSourceCToOutDir"
             BeforeTargets="BeforeBuild"
-            Condition="$(EmitDnnePlatformSourceToOutDir)"
+            Condition="$(EmitDnnePlatformSourceCToOutDir)"
             Outputs="$(CodeGenDir)platform.c"
     >
         <ItemGroup>
@@ -156,7 +156,7 @@
     <Target
             Name="CopyDnnePlatformSourceCPPToOutDir"
             BeforeTargets="BeforeBuild"
-            Condition="$(EmitDnnePlatformSourceToOutDir)"
+            Condition="$(EmitDnnePlatformSourceCPPToOutDir)"
             Outputs="$(CodeGenDir)platform_v4.cpp"
     >
         <ItemGroup>
