@@ -134,11 +134,13 @@
             Condition="$(EmitDnnePlatformSourceToOutDir)"
             Outputs="$(CodeGenDir)platform.c"
     >
-        <XmlPeek
-                XmlInputPath="$(MSBuildProjectFullPath)"
-                Query="//PackageReference[@Include='DNNE']/@Version">
-            <Output TaskParameter="Result" PropertyName="DNNEVersion"/>
-        </XmlPeek>
+        <ItemGroup>
+            <_DNNEPackage Include="@(PackageReference)" Condition="'%(Identity)' == 'DNNE'"/>
+        </ItemGroup>
+
+        <PropertyGroup>
+            <DNNEVersion>%(_DNNEPackage.Version)</DNNEVersion>
+        </PropertyGroup>
 
         <PropertyGroup>
             <DnnePlatformSource>$(NuGetPackageRoot)DNNE/$(DNNEVersion)/tools/platform/platform.c</DnnePlatformSource>
