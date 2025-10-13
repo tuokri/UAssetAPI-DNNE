@@ -20,7 +20,10 @@ public class Exports
         }
     };
 
-    [UnmanagedCallersOnly(EntryPoint = "UAssetAPI_MyExport")]
+    [UnmanagedCallersOnly(
+        CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)],
+        EntryPoint = "UAssetAPI_MyExport")
+    ]
     public static int MyExport(int a)
     {
         return a + 1;
@@ -32,7 +35,10 @@ public class Exports
         #include "uassetapi_dnne/engineversion.h"
         """
     )]
-    [UnmanagedCallersOnly(EntryPoint = "UAssetAPI_ToJson")]
+    [UnmanagedCallersOnly(
+        CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)],
+        EntryPoint = "UAssetAPI_ToJson")
+    ]
     [return: DNNE.C99Type("CsResult*")]
     public static unsafe CsResult* ToJson(int engineVersion)
     {
