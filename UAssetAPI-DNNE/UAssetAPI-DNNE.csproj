@@ -129,7 +129,7 @@
     </ItemGroup>
 
     <Target
-            Name="CopyDnnePlatformSourceToOutDir"
+            Name="CopyDnnePlatformSourceCToOutDir"
             BeforeTargets="BeforeBuild"
             Condition="$(EmitDnnePlatformSourceToOutDir)"
             Outputs="$(CodeGenDir)platform.c"
@@ -153,9 +153,39 @@
         />
     </Target>
 
-    <Target Name="CleanDnnePlatformSource"
+    <Target
+            Name="CopyDnnePlatformSourceCPPToOutDir"
+            BeforeTargets="BeforeBuild"
+            Condition="$(EmitDnnePlatformSourceToOutDir)"
+            Outputs="$(CodeGenDir)platform_v4.cpp"
+    >
+        <ItemGroup>
+            <_DNNEPackage Include="@(PackageReference)" Condition="'%(Identity)' == 'DNNE'"/>
+        </ItemGroup>
+
+        <PropertyGroup>
+            <DNNEVersion>%(_DNNEPackage.Version)</DNNEVersion>
+        </PropertyGroup>
+
+        <PropertyGroup>
+            <DnnePlatformSource>$(NuGetPackageRoot)DNNE/$(DNNEVersion)/tools/platform/platform_v4.cpp</DnnePlatformSource>
+        </PropertyGroup>
+
+        <Message Text="Copy: '$(DnnePlatformSource)' -> '$(CodeGenDir)'" Importance="high"/>
+        <Copy
+                SourceFiles="$(DnnePlatformSource)"
+                DestinationFolder="$(CodeGenDir)"
+        />
+    </Target>
+
+    <Target Name="CleanDnnePlatformCSource"
             BeforeTargets="CoreClean">
         <Delete Files="$(CodeGenDir)platform.c"/>
+    </Target>
+
+    <Target Name="CleanDnnePlatformCPPSource"
+            BeforeTargets="CoreClean">
+        <Delete Files="$(CodeGenDir)platform_v4.cpp"/>
     </Target>
 
     <ItemGroup>
