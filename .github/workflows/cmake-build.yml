@@ -37,6 +37,9 @@ jobs:
       - name: Display dotnet version
         run: dotnet --version
 
+      - name: Setup MSVC dev env
+        uses: ilammy/msvc-dev-cmd@v1
+
       # TODO: maybe this is a bit lazy?
       - name: Install latest CMake
         run: pip install --upgrade cmake
