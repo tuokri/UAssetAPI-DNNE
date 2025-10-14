@@ -3,6 +3,10 @@
 #ifndef UASSETAPI_DNNE_ENGINEVERSION
 #define UASSETAPI_DNNE_ENGINEVERSION
 
+#ifdef __cplusplus
+extern "C"
+#endif
+
 enum EngineVersion
 {
 {%- for ev in EngineVersions %}
@@ -11,3 +15,7 @@ enum EngineVersion
 };
 
 #endif // UASSETAPI_DNNE_ENGINEVERSION
+
+#ifdef __cplusplus
+}
+#endif
