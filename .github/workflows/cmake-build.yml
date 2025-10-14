@@ -43,7 +43,7 @@ jobs:
       - if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
           which msbuild
-          find / -type f -executable -name "*msbuild*" 2>/dev/null
+          find / -type f -executable -name "*msbuild*" 2>/dev/null || true
 
       # TODO: maybe this is a bit lazy?
       - name: Install latest CMake
