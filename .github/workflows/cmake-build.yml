@@ -40,6 +40,11 @@ jobs:
       - name: Setup MSVC dev env
         uses: ilammy/msvc-dev-cmd@v1
 
+      - if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          which msbuild
+          find / -type f -executable -name "*msbuild*"
+
       # TODO: maybe this is a bit lazy?
       - name: Install latest CMake
         run: pip install --upgrade cmake
