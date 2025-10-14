@@ -46,18 +46,18 @@ set(
 file(
     GLOB_RECURSE
     UASSETAPI_DNNE_PROJECT_SOURCES
-    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/**.cs
-    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/**.csproj
-    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/**.props
-    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/**.c
-    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/**.h
-    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/**.packages.lock.json
-    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/submodules/UAssetAPI/**.cs
-    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/submodules/UAssetAPI/**.csproj
-    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/submodules/UAssetAPI/**.props
-    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE.CodeGen/**.cs
-    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE.CodeGen/**.csproj
-    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE.CodeGen/**.props
+    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/*.cs
+    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/*.csproj
+    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/*.props
+    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/*.c
+    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/*.h
+    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/*.packages.lock.json
+    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/submodules/UAssetAPI/*.cs
+    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/submodules/UAssetAPI/*.csproj
+    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE/submodules/UAssetAPI/*.props
+    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE.CodeGen/*.cs
+    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE.CodeGen/*.csproj
+    ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE.CodeGen/*.props
 )
 
 cmake_print_variables(UASSETAPI_DNNE_DOTNET_CONFIGURATION)
@@ -108,7 +108,8 @@ add_custom_command(
     OUTPUT
     ${UASSETAPI_DNNE_GENERATED_SOURCES}
     ${UASSETAPI_DNNE_GENERATED_HEADERS}
-    DEPENDS ${UASSETAPI_DNNE_PROJECT_SOURCES}
+    DEPENDS
+    ${UASSETAPI_DNNE_PROJECT_SOURCES}
     COMMAND ${UASSETAPI_DNNE_DOTNET_CMD}
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/UAssetAPI-DNNE
 )
@@ -205,3 +206,16 @@ add_custom_command(
     ${UASSETAPI_DNNE_BINARY_DIR}/UAssetAPI-DNNE.runtimeconfig.json
     ${CMAKE_BINARY_DIR}/UAssetAPI-DNNE.runtimeconfig.json
 )
+
+# NOTE: libnethost is only provided with release CRT.
+#       See: https://github.com/dotnet/runtime/issues/64087
+# TODO: Fix later if libnethost debug variant is made available!
+if (MSVC)
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_compile_options(
+            uassetapi_dnne
+            PUBLIC
+            "/MT"
+        )
+    endif ()
+endif ()
