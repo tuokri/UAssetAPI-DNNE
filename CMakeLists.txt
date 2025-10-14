@@ -5,6 +5,28 @@ include(CMakePrintHelpers)
 
 set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 
+# To make things simpler, instruct .exe, .dll, and .pdb files to be placed
+# in the same directory. Also get rid of Visual Studio generator's default
+# Debug and Release directories to make sure all of our executable and library
+# files get placed in the same directory.
+if (MSVC)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+    set(CMAKE_PDB_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+    cmake_print_variables(CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+    cmake_print_variables(CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+    cmake_print_variables(CMAKE_PDB_OUTPUT_DIRECTORY)
+    cmake_print_variables(CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
+
+    foreach (CONFIG_TYPE ${CMAKE_CONFIGURATION_TYPES})
+        string(TOUPPER ${CONFIG_TYPE} CONFIG_TYPE)
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_TYPE} ${CMAKE_BINARY_DIR})
+        set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONFIG_TYPE} ${CMAKE_BINARY_DIR})
+        set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONFIG_TYPE} ${CMAKE_BINARY_DIR})
+    endforeach ()
+endif ()
+
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(UASSETAPI_DNNE_DOTNET_CONFIGURATION Debug)
 else ()
