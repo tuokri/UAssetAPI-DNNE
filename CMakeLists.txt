@@ -136,7 +136,7 @@ add_custom_command(
 )
 
 execute_process(
-    COMMAND msbuild
+    COMMAND dotnet msbuild
     -target:WriteDnneNetHostDirToFile
     -p:CMakeOutDir=${UASSETAPI_DNNE_BINARY_DIR}
     -p:DnneRuntimeIdentifier=${UASSETAPI_DNNE_FORCED_RUNTIME_IDENTIFIER}
