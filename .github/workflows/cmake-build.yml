@@ -37,6 +37,10 @@ jobs:
       - name: Display dotnet version
         run: dotnet --version
 
+      # TODO: maybe this is a bit lazy?
+      - name: Install latest CMake
+        run: pip install --upgrade cmake
+
       - run: cmake --version
 
       - name: Configure CMake
