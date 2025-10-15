@@ -236,9 +236,13 @@
         <Delete Files="$(CodeGenDir)dnne.h"/>
     </Target>
 
+    <!-- Prioritize CMake build dir over the other checks! -->
+    <PropertyGroup Condition=" '$(CMakeOutDir)' != '' ">
+        <CodeGenBinDir>$([MSBuild]::NormalizePath($(CMakeOutDir)/))</CodeGenBinDir>
+    </PropertyGroup>
     <!-- NOTE: hack for non-solution builds! -->
-    <PropertyGroup Condition=" '$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*' ">
-        <CodeGenBinDir>$(OutDir)</CodeGenBinDir>
+    <PropertyGroup Condition=" ('$(CodeGenBinDir)' == '') And ('$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*') ">
+        <CodeGenBinDir>$([MSBuild]::NormalizePath($(OutDir)))</CodeGenBinDir>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(CodeGenBinDir)' == '' ">
         <CodeGenBinDir>$(SolutionDir)UAssetAPI-DNNE.CodeGen/bin/$(Configuration)/$(TargetFramework)/$(RDIPartCodeGenBin)</CodeGenBinDir>
