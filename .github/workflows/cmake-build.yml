@@ -53,8 +53,15 @@ jobs:
 
       - run: cmake --version
 
+      - if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: echo "DOTNET_BUILD_EXTRA_ARGS=--no-restore" >> $env:GITHUB_ENV
+
       - name: Configure CMake
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
+        run: |
+          cmake 
+            -B ${{github.workspace}}/build 
+            -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
+            -DUASSETAPI_DNNE_DOTNET_BUILD_EXTRA_ARGS=${{ env.DOTNET_BUILD_EXTRA_ARGS }}
 
       # TODO: remove later.
       - if: ${{ matrix.os == 'ubuntu-latest' }}
