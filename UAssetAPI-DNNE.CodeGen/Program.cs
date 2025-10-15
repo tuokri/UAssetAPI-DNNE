@@ -25,12 +25,6 @@ var actionOption = new Option<RenderAction>("-r", "--render-action")
     Required = true,
 };
 
-var genCppOption = new Option<bool>("--generate-cpp")
-{
-    Description = "Generate C++ code if set, C otherwise",
-    DefaultValueFactory = x => false,
-};
-
 var assembly = Assembly.GetExecutingAssembly();
 var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
 var rootCommand = new RootCommand($"UAssetAPI-DNNE.CodeGen {fvi.FileVersion}")
@@ -38,7 +32,6 @@ var rootCommand = new RootCommand($"UAssetAPI-DNNE.CodeGen {fvi.FileVersion}")
     inputOption,
     actionOption,
     outputOption,
-    genCppOption,
 };
 
 rootCommand.SetAction(parseResult =>
@@ -48,9 +41,6 @@ rootCommand.SetAction(parseResult =>
     {
         throw new NullReferenceException("Invalid fileOption.");
     }
-
-    var genCpp = parseResult.GetValue(genCppOption);
-    var enumType = genCpp ? "enum class" : "enum";
 
     var outFile = parseResult.GetValue(outputOption);
 
@@ -73,8 +63,6 @@ rootCommand.SetAction(parseResult =>
             }
 
             script.Add("EngineVersions", engineVersions.ToArray());
-            script.Add("GenerateCPP", genCpp);
-            script.Add("EnumType", enumType);
             var context = new LiquidTemplateContext();
             context.PushGlobal(script);
 

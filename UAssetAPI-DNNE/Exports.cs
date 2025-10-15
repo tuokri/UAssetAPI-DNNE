@@ -5,6 +5,7 @@ using UAssetAPI.UnrealTypes;
 
 namespace UAssetAPI_DNNE;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class Exports
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]

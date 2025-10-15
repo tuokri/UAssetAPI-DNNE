@@ -22,8 +22,5 @@
 
         <!-- TODO: misleading name. Use DNNE's platform_v4.cpp file. -->
         <EmitDnnePlatformSourceCPPToOutDir>false</EmitDnnePlatformSourceCPPToOutDir>
-
-        <!-- If true, CodeGen tool generates CPP code instead of C code. -->
-        <GenerateCPP>false</GenerateCPP>
     </PropertyGroup>
 </Project>
