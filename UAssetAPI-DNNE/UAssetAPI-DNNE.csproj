@@ -146,7 +146,7 @@
         </PropertyGroup>
 
         <PropertyGroup>
-            <DnnePlatformSource>$(NuGetPackageRoot)DNNE/$(DNNEVersion)/tools/platform/platform.c</DnnePlatformSource>
+            <DnnePlatformSource>$([MSBuild]::NormalizePath($(NuGetPackageRoot)DNNE/$(DNNEVersion)/tools/platform/platform.c))</DnnePlatformSource>
         </PropertyGroup>
 
         <MakeDir Directories="$(CodeGenDir)"/>
@@ -173,7 +173,7 @@
         </PropertyGroup>
 
         <PropertyGroup>
-            <DnnePlatformSource>$(NuGetPackageRoot)DNNE/$(DNNEVersion)/tools/platform/platform_v4.cpp</DnnePlatformSource>
+            <DnnePlatformSource>$([MSBuild]::NormalizePath($(NuGetPackageRoot)DNNE/$(DNNEVersion)/tools/platform/platform_v4.cpp))</DnnePlatformSource>
         </PropertyGroup>
 
         <MakeDir Directories="$(CodeGenDir)"/>
