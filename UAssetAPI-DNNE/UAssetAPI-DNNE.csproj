@@ -238,14 +238,18 @@
 
     <!-- Prioritize CMake build dir over the other checks! -->
     <PropertyGroup Condition=" '$(CMakeOutDir)' != '' ">
-        <CodeGenBinDir>$([MSBuild]::NormalizePath($(CMakeOutDir)/))</CodeGenBinDir>
+        <CodeGenBinDir>$(CMakeOutDir)/</CodeGenBinDir>
     </PropertyGroup>
     <!-- NOTE: hack for non-solution builds! -->
     <PropertyGroup Condition=" ('$(CodeGenBinDir)' == '') And ('$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*') ">
-        <CodeGenBinDir>$([MSBuild]::NormalizePath($(OutDir)))</CodeGenBinDir>
+        <CodeGenBinDir>$(OutDir)</CodeGenBinDir>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(CodeGenBinDir)' == '' ">
         <CodeGenBinDir>$(SolutionDir)UAssetAPI-DNNE.CodeGen/bin/$(Configuration)/$(TargetFramework)/$(RDIPartCodeGenBin)</CodeGenBinDir>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(CodeGenBinDir)' != '' ">
+        <CodeGenBinDir>$([MSBuild]::NormalizePath($(CodeGenBinDir)))</CodeGenBinDir>
     </PropertyGroup>
 
     <!-- TODO: there has to be a cleaner and more robust way of doing this? -->
