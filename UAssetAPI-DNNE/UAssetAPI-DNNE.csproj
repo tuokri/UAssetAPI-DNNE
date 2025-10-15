@@ -272,7 +272,7 @@
         <MakeDir Directories="$(CodeGenDir)"/>
 
         <PropertyGroup>
-            <EngineVersionTemplateFile>$(ProjectDir)src/templates/EngineVersion.liquid</EngineVersionTemplateFile>
+            <EngineVersionTemplateFile>$([MSBuild]::NormalizePath($(ProjectDir)src/templates/EngineVersion.liquid))</EngineVersionTemplateFile>
         </PropertyGroup>
 
         <Exec Command="$(CodeGenBinFullPath) --input=&quot;$(EngineVersionTemplateFile)&quot; --output=&quot;$(EngineVersionHeaderFile)&quot; --render-action=EngineVersion"/>
