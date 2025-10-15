@@ -40,6 +40,7 @@ jobs:
       - name: Setup MSVC dev env
         uses: ilammy/msvc-dev-cmd@v1
 
+      # TODO: remove later.
       - if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
           find ~ -type f -executable -name "*platform.c" 2>/dev/null || true
@@ -53,8 +54,18 @@ jobs:
       - name: Configure CMake
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
 
+      # TODO: remove later.
+      - if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          find ~ -type f -executable -name "*platform.c" 2>/dev/null || true
+
       - name: Build
         run: cmake --build ${{github.workspace}}/build --config ${{ matrix.configuration }}
+
+      # TODO: remove later.
+      - if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          find ~ -type f -executable -name "*platform.c" 2>/dev/null || true
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
