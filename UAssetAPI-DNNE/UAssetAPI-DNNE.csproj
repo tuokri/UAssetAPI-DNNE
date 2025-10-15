@@ -273,7 +273,7 @@
             <EngineVersionTemplateFile>$(ProjectDir)src/templates/EngineVersion.liquid</EngineVersionTemplateFile>
         </PropertyGroup>
 
-        <Exec Command="$(CodeGenBinFullPath) --input=&quot;$(EngineVersionTemplateFile)&quot; --output=&quot;$(EngineVersionHeaderFile)&quot; --render-action=EngineVersion --generate-cpp=$(GenerateCPP)"/>
+        <Exec Command="$(CodeGenBinFullPath) --input=&quot;$(EngineVersionTemplateFile)&quot; --output=&quot;$(EngineVersionHeaderFile)&quot; --render-action=EngineVersion"/>
     </Target>
 
     <Target Name="CleanEngineVersionHeader"
