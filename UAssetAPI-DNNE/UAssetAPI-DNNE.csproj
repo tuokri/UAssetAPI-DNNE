@@ -98,12 +98,14 @@
     >
         <!-- This mirrors DNNE's $(DnneNetHostDir). -->
         <PropertyGroup>
-            <_DnneNetHostDir>$(NetCoreTargetingPackRoot)/Microsoft.NETCore.App.Host.$(DnneRuntimeIdentifier)/$(BundledNETCoreAppPackageVersion)/runtimes/$(DnneRuntimeIdentifier)/native</_DnneNetHostDir>
+            <_DnneNetHostDir>$([MSBuild]::NormalizePath($(NetCoreTargetingPackRoot)/Microsoft.NETCore.App.Host.$(DnneRuntimeIdentifier)/$(BundledNETCoreAppPackageVersion)/runtimes/$(DnneRuntimeIdentifier)/native))</_DnneNetHostDir>
         </PropertyGroup>
+
         <Message Text="_DnneNetHostDir='$(_DnneNetHostDir)'"/>
+
         <WriteLinesToFile
                 File="$(OutFuckingDir)DnneNetHostDir.txt"
-                Lines="$([MSBuild]::NormalizePath($(_DnneNetHostDir)))"
+                Lines="$(_DnneNetHostDir)"
                 Overwrite="true"
         />
     </Target>
