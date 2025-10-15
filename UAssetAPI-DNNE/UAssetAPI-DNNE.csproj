@@ -82,6 +82,7 @@
         <OutFuckingDir>$(CMakeOutDir)/</OutFuckingDir>
     </PropertyGroup>
     <PropertyGroup>
+        <!-- The directory where generated code is placed. -->
         <CodeGenDir>$(OutFuckingDir)$(DnneNativeBinaryName)/</CodeGenDir>
     </PropertyGroup>
 
@@ -118,9 +119,9 @@
     <ItemGroup>
         <ProjectReference Include="..\submodules\UAssetAPI\UAssetAPI\UAssetAPI.csproj"/>
         <ProjectReference Include="..\UAssetAPI-DNNE.CodeGen\UAssetAPI-DNNE.CodeGen.csproj">
-            <Private>False</Private>
-            <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
-            <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+            <Private>false</Private>
+            <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+            <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
         </ProjectReference>
     </ItemGroup>
 
@@ -146,6 +147,8 @@
             <DnnePlatformSource>$(NuGetPackageRoot)DNNE/$(DNNEVersion)/tools/platform/platform.c</DnnePlatformSource>
         </PropertyGroup>
 
+        <MakeDir Directories="$(CodeGenDir)"/>
+
         <Message Text="Copy: '$(DnnePlatformSource)' -> '$(CodeGenDir)'" Importance="high"/>
         <Copy
                 SourceFiles="$(DnnePlatformSource)"
@@ -170,6 +173,8 @@
         <PropertyGroup>
             <DnnePlatformSource>$(NuGetPackageRoot)DNNE/$(DNNEVersion)/tools/platform/platform_v4.cpp</DnnePlatformSource>
         </PropertyGroup>
+
+        <MakeDir Directories="$(CodeGenDir)"/>
 
         <Message Text="Copy: '$(DnnePlatformSource)' -> '$(CodeGenDir)'" Importance="high"/>
         <Copy
@@ -229,35 +234,46 @@
         <Delete Files="$(CodeGenDir)dnne.h"/>
     </Target>
 
+    <!-- NOTE: hack for non-solution builds! -->
+    <PropertyGroup Condition=" '$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*' ">
+        <CodeGenBinDir>$(OutDir)</CodeGenBinDir>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(CodeGenBinDir)' == '' ">
+        <CodeGenBinDir>$(SolutionDir)UAssetAPI-DNNE.CodeGen/bin/$(Configuration)/$(TargetFramework)/$(RDIPartCodeGenBin)</CodeGenBinDir>
+    </PropertyGroup>
+
+    <!-- TODO: there has to be a cleaner and more robust way of doing this? -->
+    <!-- TODO: this breaks if UAssetAPI-DNNE.CodeGen and UAssetAPI-DNNE target frameworks differ? -->
+    <PropertyGroup>
+        <!-- NOTE: Run the code generator appropriate for the **BUILD MACHINE'S OS** -->
+        <CodeGenBinFullPath>$([MSBuild]::NormalizePath($(CodeGenBinDir)$(CodeGenBin)))</CodeGenBinFullPath>
+        <CodeGenDLLFullPath>$([MSBuild]::NormalizePath($(CodeGenBinDir)UAssetAPI-DNNE.CodeGen.dll))</CodeGenDLLFullPath>
+    </PropertyGroup>
+
+    <!-- TODO: trying to make generator re-run when CodeGen.exe changes. -->
+    <ItemGroup>
+        <_CodeGenBinFullPath Include="$(CodeGenBinFullPath)"/>
+        <_CodeGenDLLFullPath Include="$(CodeGenDLLFullPath)"/>
+    </ItemGroup>
+
+    <!-- TODO: is depending on the .exe and .dll of CodeGen here robust? -->
+    <!-- TODO: this should be ru-run if CodeGen changes. It does not happen currently! -->
     <Target Name="GenerateEngineVersionHeader"
-            AfterTargets="CoreCompile"
             BeforeTargets="DnneBuildNativeExports"
-            Inputs="$(ProjectDir)src/templates/EngineVersion.liquid"
+            Inputs="$(ProjectDir)src/templates/EngineVersion.liquid;$(_CodeGenBinFullPath);$(_CodeGenDLLFullPath)"
             Outputs="$(EngineVersionHeaderFile)">
+
+        <Message Text="CodeGenBinFullPath=$(CodeGenBinFullPath)" Importance="high"/>
+        <Message Text="CodeGenDLLFullPath=$(CodeGenDLLFullPath)" Importance="high"/>
 
         <Message Text="Generating '$(EngineVersionHeaderFile)'" Importance="high"/>
         <MakeDir Directories="$(CodeGenDir)"/>
-
-        <!-- NOTE: hack for non-solution builds! -->
-        <PropertyGroup Condition=" '$(SolutionDir)' == '' Or '$(SolutionDir)' == '*Undefined*' ">
-            <CodeGenBinDir>$(OutDir)</CodeGenBinDir>
-        </PropertyGroup>
-        <PropertyGroup Condition=" '$(CodeGenBinDir)' == '' ">
-            <CodeGenBinDir>$(SolutionDir)UAssetAPI-DNNE.CodeGen/bin/$(Configuration)/$(TargetFramework)/$(RDIPartCodeGenBin)</CodeGenBinDir>
-        </PropertyGroup>
-
-        <!-- TODO: there has to be a cleaner and more robust way of doing this? -->
-        <!-- TODO: this breaks if UAssetAPI-DNNE.CodeGen and UAssetAPI-DNNE target frameworks differ? -->
-        <PropertyGroup>
-            <!-- NOTE: Run the code generator appropriate for the **BUILD MACHINE'S OS** -->
-            <CodeGenCmd>$(CodeGenBinDir)$(CodeGenBin)</CodeGenCmd>
-        </PropertyGroup>
 
         <PropertyGroup>
             <EngineVersionTemplateFile>$(ProjectDir)src/templates/EngineVersion.liquid</EngineVersionTemplateFile>
         </PropertyGroup>
 
-        <Exec Command="$(CodeGenCmd) --input=&quot;$(EngineVersionTemplateFile)&quot; --output=&quot;$(EngineVersionHeaderFile)&quot; --render-action=EngineVersion"/>
+        <Exec Command="$(CodeGenBinFullPath) --input=&quot;$(EngineVersionTemplateFile)&quot; --output=&quot;$(EngineVersionHeaderFile)&quot; --render-action=EngineVersion --generate-cpp=$(GenerateCPP)"/>
     </Target>
 
     <Target Name="CleanEngineVersionHeader"

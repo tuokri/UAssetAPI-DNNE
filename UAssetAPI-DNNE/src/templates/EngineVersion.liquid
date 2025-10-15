@@ -3,11 +3,14 @@
 #ifndef UASSETAPI_DNNE_ENGINEVERSION
 #define UASSETAPI_DNNE_ENGINEVERSION
 
+{% if GenerateCPP %}
 #ifdef __cplusplus
 extern "C"
+{
 #endif
+{% endif %}
 
-enum EngineVersion
+{{ EnumType }} EngineVersion
 {
 {%- for ev in EngineVersions %}
     {{ ev.name }} = {{ ev.value }},
@@ -16,6 +19,8 @@ enum EngineVersion
 
 #endif // UASSETAPI_DNNE_ENGINEVERSION
 
+{% if GenerateCPP %}
 #ifdef __cplusplus
 }
 #endif
+{% endif %}

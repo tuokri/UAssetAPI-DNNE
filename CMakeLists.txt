@@ -38,6 +38,7 @@ option(UASSETAPI_DNNE_BUILD_EXPORTS "Run dotnet build step for DNNE exports." OF
 # See: https://github.com/AaronRobinsonMSFT/DNNE/blob/363a27a004c5e46b66cb39f6eaba756eed5edb27/src/msbuild/DNNE.BuildTasks/CreateCompileCommand.cs#L81-L82
 option(UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_C_TO_OUT_DIR "Emit DNNE's platform.c (C) to build dir." ON)
 option(UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_CPP_TO_OUT_DIR "Emit DNNE's platform_4.cpp (C++) to build dir." OFF)
+option(UASSETAPI_DNNE_GENERATE_CPP "If set, generate CPP files with CodeGen tool, else C." OFF)
 
 # TODO: do we need these to be configurable?
 # TODO: if yes, maybe add option that skips this block?
@@ -61,6 +62,7 @@ set(
     -p:DnneBuildExports=${DNNE_BUILD_EXPORTS}
     -p:EmitDnnePlatformSourceCToOutDir=${UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_C_TO_OUT_DIR}
     -p:EmitDnnePlatformSourceCPPToOutDir=${UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_CPP_TO_OUT_DIR}
+    -p:GenerateCPP=${UASSETAPI_DNNE_GENERATE_CPP}
     -p:CMakeOutDir="${UASSETAPI_DNNE_BINARY_DIR}"
     --output "${UASSETAPI_DNNE_BINARY_DIR}"
 )
@@ -90,6 +92,7 @@ cmake_print_variables(UASSETAPI_DNNE_BINARY_DIR)
 cmake_print_variables(UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_C_TO_OUT_DIR)
 cmake_print_variables(UASSETAPI_DNNE_EMIT_DNNE_PLATFORM_SOURCE_CPP_TO_OUT_DIR)
 cmake_print_variables(UASSETAPI_DNNE_PROJECT_SOURCES)
+cmake_print_variables(UASSETAPI_DNNE_GENERATE_CPP)
 
 set(
     UASSETAPI_DNNE_C_SOURCES
