@@ -22,9 +22,15 @@ jobs:
       matrix:
         # TODO: USE PRESETS!!!
         configuration: [ "Debug", "Release" ]
-        os: [ "windows-latest", "ubuntu-latest" ]
+        system:
+          - { os: "windows-latest", shell: pwsh }
+          - { os: "ubuntu-latest", shell: bash }
 
-    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.system.shell }}
+
+    runs-on: ${{ matrix.system.os }}
 
     steps:
       - uses: actions/checkout@v5
@@ -33,13 +39,13 @@ jobs:
 
       - name: Install Linux dependencies
         uses: awalsh128/cache-apt-pkgs-action@latest
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.system.os == 'ubuntu-latest' }}
         with:
           packages: dos2unix
           version: 1.0
 
       - name: Run dos2unix
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.system.os == 'ubuntu-latest' }}
         run: |
           find . -type f -name "*.txt" -print0 | xargs -0 dos2unix
           find . -type f -name "*.sh" -print0 | xargs -0 dos2unix
@@ -75,7 +81,7 @@ jobs:
       #   fails to find the source file on Linux GH Actions runners, even though
       #   it exists. So copy it manually here.
       - name: Linux workarounds
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.system.os == 'ubuntu-latest' }}
         env:
           SHIT_WORKAROUND_DIR: "${{ github.workspace }}/UAssetAPI-DNNE/build/generated/uassetapi_dnne/"
         run: |
@@ -96,7 +102,7 @@ jobs:
           -DUASSETAPI_DNNE_DOTNET_BUILD_EXTRA_ARGS=${{ env.DOTNET_BUILD_EXTRA_ARGS }}
 
       # TODO: remove later.
-      - if: ${{ matrix.os == 'ubuntu-latest' }}
+      - if: ${{ matrix.system.os == 'ubuntu-latest' }}
         run: |
           find ~ -type f -executable -name "*platform.c" 2>/dev/null || true
 
@@ -108,7 +114,7 @@ jobs:
         run: cmake --build ${{github.workspace}}/build --config ${{ matrix.configuration }}
 
       # TODO: remove later.
-      - if: ${{ matrix.os == 'ubuntu-latest' }}
+      - if: ${{ matrix.system.os == 'ubuntu-latest' }}
         run: |
           find ~ -type f -executable -name "*platform.c" 2>/dev/null || true
 
@@ -116,5 +122,5 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: UAssetAPI-DNNE-cmake-build-${{ matrix.os }}-${{ matrix.configuration }}
+          name: UAssetAPI-DNNE-cmake-build-${{ matrix.system.os }}-${{ matrix.configuration }}
           path: ${{github.workspace}}/build
