@@ -31,6 +31,24 @@ jobs:
         with:
           submodules: true
 
+      - name: Run dos2unix
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          find . -type f -name "*.txt" -print0 | xargs -0 dos2unix
+          find . -type f -name "*.sh" -print0 | xargs -0 dos2unix
+          find . -type f -name "*.json" -print0 | xargs -0 dos2unix
+          find . -type f -name "*.yml" -print0 | xargs -0 dos2unix
+          find . -type f -name "*.yaml" -print0 | xargs -0 dos2unix
+          find . -type f -name "*.liquid" -print0 | xargs -0 dos2unix
+          find . -type f -name "*.props" -print0 | xargs -0 dos2unix
+          find . -type f -name "*.cs" -print0 | xargs -0 dos2unix
+          find . -type f -name "*.c" -print0 | xargs -0 dos2unix
+          find . -type f -name "*.h" -print0 | xargs -0 dos2unix
+          find . -type f -name "*.cpp" -print0 | xargs -0 dos2unix
+          find . -type f -name "*.hpp" -print0 | xargs -0 dos2unix
+          find . -type f -name "*.csproj" -print0 | xargs -0 dos2unix
+          find . -type f -name "*.cmake" -print0 | xargs -0 dos2unix
+
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
         with:
