@@ -76,7 +76,7 @@ jobs:
       #   it exists. So copy it manually here.
       - if: ${{ matrix.os == 'ubuntu-latest' }}
         env:
-          SHIT_WORKAROUND_DIR: "${{ github.workspace }}/UAssetAPI-DNNE/bin/${{ matrix.configuration }}/net9.0/linux-64"
+          SHIT_WORKAROUND_DIR: "UAssetAPI-DNNE/bin/${{ matrix.configuration }}/net9.0/linux-64"
         run: |
           find ~ -type f -name "*platform.c" 2>/dev/null || true
           find ~ -type f -name "*platform.c" -print0 2>/dev/null | xargs -0 ls -li || true
