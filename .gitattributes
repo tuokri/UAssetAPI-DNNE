@@ -1,0 +1,13 @@
+*.txt text eol=LF
+*.cs text eol=LF
+*.cmake text eol=LF
+*.c text eol=LF
+*.h text eol=LF
+*.cpp text eol=LF
+*.hpp text eol=LF
+*.liquid text eol=LF
+*.csproj text eol=LF
+*.props text eol=LF
+*.yaml text eol=LF
+*.yml text eol=LF
+
