@@ -31,6 +31,13 @@ jobs:
         with:
           submodules: true
 
+      - name: Install Linux dependencies
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        with:
+          packages: dos2unix
+          version: 1.0
+
       - name: Run dos2unix
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
