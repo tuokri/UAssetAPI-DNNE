@@ -152,6 +152,7 @@
         <MakeDir Directories="$(CodeGenDir)"/>
 
         <Message Text="Copy: '$(DnnePlatformSource)' -> '$(CodeGenDir)'" Importance="high"/>
+        <!-- TODO: remember to remove debug-only options! -->
         <Copy
                 SourceFiles="$(DnnePlatformSource)"
                 DestinationFolder="$(CodeGenDir)"
