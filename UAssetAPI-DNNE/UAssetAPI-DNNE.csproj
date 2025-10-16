@@ -155,6 +155,8 @@
         <Copy
                 SourceFiles="$(DnnePlatformSource)"
                 DestinationFolder="$(CodeGenDir)"
+                Retries="3"
+                RetryDelayMilliseconds="500"
         />
     </Target>
 
