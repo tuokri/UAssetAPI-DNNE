@@ -157,6 +157,7 @@
                 DestinationFolder="$(CodeGenDir)"
                 Retries="3"
                 RetryDelayMilliseconds="500"
+                ContinueOnError="true"
         />
     </Target>
 
