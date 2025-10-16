@@ -47,7 +47,7 @@ foreach (TARGET_KEY ${TARGET_KEYS})
         if (NOT NO_RUNTIME)
             string(JSON DLL_PATH MEMBER "${RUNTIME_OBJ}" 0)
 
-            if (DLL_PATH MATCHES "\\.dll$")
+            if (DLL_PATH MATCHES ".*.dll$")
                 # Strip path prefixes, keep only filename.
                 get_filename_component(DLL_FILE "${DLL_PATH}" NAME)
                 list(APPEND DLL_NAMES "${DLL_FILE}")
