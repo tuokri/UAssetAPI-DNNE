@@ -70,11 +70,18 @@ jobs:
       - name: Setup MSVC dev env
         uses: ilammy/msvc-dev-cmd@v1
 
-      # TODO: remove later.
+      # TODO: remove later. Stupid workaround.
+      #   For whatever fucking reason, the Copy task in UAssetAPI-DNNE.csproj
+      #   fails to find the source file on Linux GH Actions runners, even though
+      #   it exists. So copy it manually here.
       - if: ${{ matrix.os == 'ubuntu-latest' }}
+        env:
+          SHIT_WORKAROUND_DIR: "${{ github.workspace }}/UAssetAPI-DNNE/bin/${{ matrix.configuration }}/net9.0/linux-64"
         run: |
-          find ~ -type f -executable -name "*platform.c" 2>/dev/null || true
-          find ~ -type f -executable -name "*platform.c" -print0 2>/dev/null | xargs -0 ls -li || true
+          find ~ -type f -name "*platform.c" 2>/dev/null || true
+          find ~ -type f -name "*platform.c" -print0 2>/dev/null | xargs -0 ls -li || true
+          mkdir -p ${{ env.SHIT_WORKAROUND_DIR }} || true
+          find ~ -type f -name "*platform.c" 2>/dev/null -exec cp {} ${{ env.SHIT_WORKAROUND_DIR }} || true
 
       # TODO: maybe this is a bit lazy?
       - name: Install latest CMake
