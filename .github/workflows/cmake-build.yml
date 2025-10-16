@@ -83,7 +83,7 @@ jobs:
       - name: Linux workarounds
         if: ${{ matrix.system.os == 'ubuntu-latest' }}
         env:
-          SHIT_WORKAROUND_DIR: "${{ github.workspace }}/UAssetAPI-DNNE/build/generated/uassetapi_dnne/"
+          SHIT_WORKAROUND_DIR: "${{github.workspace}}/build/generated/uassetapi_dnne/"
         run: |
           find ~ -type f -name "*platform.c" 2>/dev/null || true
           find ~ -type f -name "*platform.c" -print0 2>/dev/null | xargs -0 ls -li || true
